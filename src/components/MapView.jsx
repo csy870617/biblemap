@@ -1,7 +1,9 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker, Tooltip } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import locations from '../data/locations.json'
+import routes from '../data/routes.json'
+import RouteArrows from './RouteArrows'
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -17,7 +19,9 @@ L.Icon.Default.mergeOptions({
 const JERUSALEM_CENTER = [31.7683, 35.2137]
 const DEFAULT_ZOOM = 8
 
-export default function MapView({ onSelectLocation }) {
+export default function MapView({ onSelectLocation, activeRouteId }) {
+  const activeRoute = routes.find((r) => r.id === activeRouteId)
+
   return (
     <MapContainer
       center={JERUSALEM_CENTER}
@@ -30,6 +34,8 @@ export default function MapView({ onSelectLocation }) {
         subdomains="abcd"
         maxZoom={20}
       />
+
+      {/* Location markers */}
       {locations.map((location) => (
         <Marker
           key={location.id}
@@ -41,6 +47,39 @@ export default function MapView({ onSelectLocation }) {
           <Popup>{location.name}</Popup>
         </Marker>
       ))}
+
+      {/* Route polyline + arrows + waypoint dots */}
+      {activeRoute && (
+        <>
+          <Polyline
+            positions={activeRoute.path.map((p) => [p.lat, p.lng])}
+            pathOptions={{
+              color: activeRoute.color,
+              weight: 3.5,
+              opacity: 0.8,
+              dashArray: '8 6',
+            }}
+          />
+          <RouteArrows path={activeRoute.path} color={activeRoute.color} />
+          {activeRoute.path.map((point, i) => (
+            <CircleMarker
+              key={`${activeRoute.id}-${i}`}
+              center={[point.lat, point.lng]}
+              radius={4}
+              pathOptions={{
+                color: activeRoute.color,
+                fillColor: i === 0 ? '#fff' : activeRoute.color,
+                fillOpacity: 1,
+                weight: 2,
+              }}
+            >
+              <Tooltip direction="top" offset={[0, -6]}>
+                {point.label}
+              </Tooltip>
+            </CircleMarker>
+          ))}
+        </>
+      )}
     </MapContainer>
   )
 }
