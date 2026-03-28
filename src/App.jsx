@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import MapView from './components/MapView'
+import { formatVerseRef } from './utils/bibleRef'
 import './App.css'
 
 function App() {
@@ -57,27 +58,19 @@ function App() {
                   관련 성경 구절
                 </h3>
                 <ul className="space-y-3">
-                  {selectedLocation.verses.map((verse, index) => {
-                    const dashIndex = verse.indexOf(' - ')
-                    const ref = dashIndex !== -1 ? verse.slice(0, dashIndex) : ''
-                    const text = dashIndex !== -1 ? verse.slice(dashIndex + 3) : verse
-
-                    return (
-                      <li
-                        key={index}
-                        className="bg-[#f5f0e8] rounded-lg p-3 border-l-3 border-[#1a2744]"
-                      >
-                        {ref && (
-                          <span className="block text-xs font-semibold text-[#1a2744] mb-1">
-                            {ref}
-                          </span>
-                        )}
-                        <span className="text-sm text-[#3d3529] leading-relaxed italic">
-                          "{text}"
-                        </span>
-                      </li>
-                    )
-                  })}
+                  {selectedLocation.verses.map((verse, index) => (
+                    <li
+                      key={index}
+                      className="bg-[#f5f0e8] rounded-lg p-3 border-l-3 border-[#1a2744]"
+                    >
+                      <span className="block text-xs font-semibold text-[#1a2744] mb-1">
+                        {formatVerseRef(verse)}
+                      </span>
+                      <span className="text-sm text-[#3d3529] leading-relaxed italic">
+                        "{verse.textKo}"
+                      </span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
