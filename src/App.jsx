@@ -23,7 +23,7 @@ function App() {
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Map - 70% */}
-        <div className="w-[70%] shrink-0">
+        <div className="w-[70%] shrink-0 h-full">
           <MapView onSelectLocation={setSelectedLocation} />
         </div>
 
