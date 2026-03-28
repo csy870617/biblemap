@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css'
 import locations from '../data/locations.json'
 import routes from '../data/routes.json'
 import RouteArrows from './RouteArrows'
+import { useLang } from '../i18n/LangContext'
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -20,6 +21,7 @@ const JERUSALEM_CENTER = [31.7683, 35.2137]
 const DEFAULT_ZOOM = 8
 
 export default function MapView({ onSelectLocation, activeRouteId }) {
+  const { lang } = useLang()
   const activeRoute = routes.find((r) => r.id === activeRouteId)
 
   return (
@@ -44,7 +46,7 @@ export default function MapView({ onSelectLocation, activeRouteId }) {
             click: () => onSelectLocation(location),
           }}
         >
-          <Popup>{location.name}</Popup>
+          <Popup>{location[`name_${lang}`] || location.name_ko}</Popup>
         </Marker>
       ))}
 
@@ -74,7 +76,7 @@ export default function MapView({ onSelectLocation, activeRouteId }) {
               }}
             >
               <Tooltip direction="top" offset={[0, -6]}>
-                {point.label}
+                {point[`label_${lang}`] || point.label_ko}
               </Tooltip>
             </CircleMarker>
           ))}
