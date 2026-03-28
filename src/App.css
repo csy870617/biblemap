@@ -1,0 +1,12 @@
+.waypoint-label {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.waypoint-label::before {
+  display: none !important;
+}

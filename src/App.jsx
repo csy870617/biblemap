@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import MapView from './components/MapView'
 import LocationDetail from './components/LocationDetail'
 import BottomSheet from './components/BottomSheet'
@@ -9,8 +9,17 @@ import './App.css'
 
 function App() {
   const [selectedLocation, setSelectedLocation] = useState(null)
-  const [activeRouteId, setActiveRouteId] = useState(null)
+  const [activeRouteIds, setActiveRouteIds] = useState(new Set())
   const { t } = useLang()
+
+  const toggleRoute = useCallback((id) => {
+    setActiveRouteIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
 
   return (
     <div className="h-screen flex flex-col bg-parchment-50">
@@ -34,15 +43,15 @@ function App() {
         <div className="w-full lg:w-[70%] shrink-0 h-full">
           <MapView
             onSelectLocation={setSelectedLocation}
-            activeRouteId={activeRouteId}
+            activeRouteIds={activeRouteIds}
           />
         </div>
 
         {/* Desktop Sidebar */}
         <aside className="hidden lg:flex lg:flex-col w-[30%] bg-parchment-100 border-l border-parchment-300 overflow-y-auto">
           <RouteSelector
-            activeRouteId={activeRouteId}
-            onSelectRoute={setActiveRouteId}
+            activeRouteIds={activeRouteIds}
+            onToggleRoute={toggleRoute}
           />
           {selectedLocation ? (
             <LocationDetail location={selectedLocation} />
@@ -63,8 +72,8 @@ function App() {
         <div className="lg:hidden">
           <div className="fixed top-16 right-3 z-[1000]">
             <MobileRouteSelector
-              activeRouteId={activeRouteId}
-              onSelectRoute={setActiveRouteId}
+              activeRouteIds={activeRouteIds}
+              onToggleRoute={toggleRoute}
             />
           </div>
           <BottomSheet
@@ -77,26 +86,29 @@ function App() {
   )
 }
 
-function MobileRouteSelector({ activeRouteId, onSelectRoute }) {
+function MobileRouteSelector({ activeRouteIds, onToggleRoute }) {
   const [open, setOpen] = useState(false)
   const { t } = useLang()
+  const count = activeRouteIds.size
 
   return (
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="bg-navy-900 text-parchment-50 px-3 py-2 rounded-lg shadow-lg text-xs font-medium"
+        className="bg-navy-900 text-parchment-50 px-3 py-2 rounded-lg shadow-lg text-xs font-medium flex items-center gap-1.5"
       >
         &#x1F6A9; {t('viewJourneys')}
+        {count > 0 && (
+          <span className="bg-warm-400 text-navy-900 rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">
+            {count}
+          </span>
+        )}
       </button>
       {open && (
-        <div className="absolute top-full right-0 mt-2 w-56">
+        <div className="absolute top-full right-0 mt-2 w-64">
           <RouteSelector
-            activeRouteId={activeRouteId}
-            onSelectRoute={(id) => {
-              onSelectRoute(id)
-              setOpen(false)
-            }}
+            activeRouteIds={activeRouteIds}
+            onToggleRoute={onToggleRoute}
           />
         </div>
       )}
