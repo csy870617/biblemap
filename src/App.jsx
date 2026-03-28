@@ -3,25 +3,29 @@ import MapView from './components/MapView'
 import LocationDetail from './components/LocationDetail'
 import BottomSheet from './components/BottomSheet'
 import RouteSelector from './components/RouteSelector'
+import LangToggle from './components/LangToggle'
+import { useLang } from './i18n/LangContext'
 import './App.css'
 
 function App() {
   const [selectedLocation, setSelectedLocation] = useState(null)
   const [activeRouteId, setActiveRouteId] = useState(null)
+  const { t } = useLang()
 
   return (
     <div className="h-screen flex flex-col bg-parchment-50">
       {/* Header */}
       <header className="bg-navy-900 px-6 py-3 shrink-0 flex items-center gap-3 shadow-md z-10">
         <span className="text-warm-400 text-2xl">&#x271D;</span>
-        <div>
+        <div className="flex-1">
           <h1 className="text-lg font-semibold text-parchment-100 tracking-wide">
-            Bible Map
+            {t('appTitle')}
           </h1>
           <p className="text-xs text-parchment-300 hidden sm:block">
-            성경의 땅을 탐험하세요
+            {t('appSubtitle')}
           </p>
         </div>
+        <LangToggle />
       </header>
 
       {/* Main Content */}
@@ -46,10 +50,10 @@ function App() {
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
               <span className="text-5xl text-navy-800/15 mb-4">&#x1F5FA;</span>
               <p className="text-sm font-medium text-charcoal-600/60 mb-1">
-                지도에서 마커를 클릭하세요
+                {t('emptyTitle')}
               </p>
               <p className="text-xs text-charcoal-600/40">
-                해당 지역의 역사와 성경 구절을 확인할 수 있습니다
+                {t('emptyDesc')}
               </p>
             </div>
           )}
@@ -57,7 +61,6 @@ function App() {
 
         {/* Mobile Bottom Sheet */}
         <div className="lg:hidden">
-          {/* Mobile Route Selector - floating */}
           <div className="fixed top-16 right-3 z-[1000]">
             <MobileRouteSelector
               activeRouteId={activeRouteId}
@@ -76,6 +79,7 @@ function App() {
 
 function MobileRouteSelector({ activeRouteId, onSelectRoute }) {
   const [open, setOpen] = useState(false)
+  const { t } = useLang()
 
   return (
     <div className="relative">
@@ -83,7 +87,7 @@ function MobileRouteSelector({ activeRouteId, onSelectRoute }) {
         onClick={() => setOpen(!open)}
         className="bg-navy-900 text-parchment-50 px-3 py-2 rounded-lg shadow-lg text-xs font-medium"
       >
-        &#x1F6A9; 여정 보기
+        &#x1F6A9; {t('viewJourneys')}
       </button>
       {open && (
         <div className="absolute top-full right-0 mt-2 w-56">
