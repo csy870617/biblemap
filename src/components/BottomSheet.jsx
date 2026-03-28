@@ -15,7 +15,6 @@ export default function BottomSheet({ location, onClose }) {
   const dragRef = useRef(null)
   const sheetRef = useRef(null)
 
-  // When a new location is selected, open to half
   useEffect(() => {
     if (location) setSnap(SNAP_HALF)
   }, [location])
@@ -60,7 +59,7 @@ export default function BottomSheet({ location, onClose }) {
   return (
     <div
       ref={sheetRef}
-      className="fixed bottom-0 left-0 right-0 bg-[#f5f0e8] rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.15)] z-[1000] flex flex-col"
+      className="fixed bottom-0 left-0 right-0 bg-parchment-100 rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.12)] z-[1000] flex flex-col"
       style={{
         height: `${heightPercent}vh`,
         transition: dragRef.current ? 'none' : 'height 0.3s ease-out',
@@ -72,7 +71,7 @@ export default function BottomSheet({ location, onClose }) {
         onTouchStart={handleDragStart}
         onMouseDown={handleDragStart}
       >
-        <div className="w-10 h-1 rounded-full bg-[#1a2744]/30" />
+        <div className="w-10 h-1 rounded-full bg-parchment-300" />
       </div>
 
       {/* Scrollable Content */}
