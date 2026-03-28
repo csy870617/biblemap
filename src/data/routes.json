@@ -1,0 +1,43 @@
+[
+  {
+    "id": "abraham",
+    "name": "아브라함의 여정",
+    "nameEn": "Journey of Abraham",
+    "color": "#8B5E3C",
+    "description": "갈대아 우르에서 하란을 거쳐 가나안 땅으로, 이후 이집트까지 이어진 믿음의 여정",
+    "path": [
+      { "lat": 30.9626, "lng": 46.1009, "label": "우르 (Ur)" },
+      { "lat": 36.8664, "lng": 39.0321, "label": "하란 (Haran)" },
+      { "lat": 33.5138, "lng": 36.2765, "label": "다마스쿠스 (Damascus)" },
+      { "lat": 32.2117, "lng": 35.2544, "label": "세겜 (Shechem)" },
+      { "lat": 31.7781, "lng": 35.2354, "label": "예루살렘 인근" },
+      { "lat": 31.5250, "lng": 35.1126, "label": "헤브론 (Hebron)" },
+      { "lat": 30.8574, "lng": 34.7900, "label": "네겝 (Negev)" },
+      { "lat": 30.0444, "lng": 31.2357, "label": "이집트 (Egypt)" }
+    ]
+  },
+  {
+    "id": "paul-1",
+    "name": "바울의 1차 전도여행",
+    "nameEn": "Paul's First Missionary Journey",
+    "color": "#2563EB",
+    "description": "안디옥에서 출발하여 키프로스 섬과 소아시아 남부를 돌아 다시 안디옥으로 돌아온 전도여행 (AD 46-48)",
+    "path": [
+      { "lat": 36.2021, "lng": 36.1566, "label": "안디옥 (Antioch)" },
+      { "lat": 36.1867, "lng": 36.1563, "label": "셀류키아 (Seleucia)" },
+      { "lat": 34.9420, "lng": 33.6234, "label": "살라미 (Salamis)" },
+      { "lat": 34.7554, "lng": 32.4225, "label": "바보 (Paphos)" },
+      { "lat": 36.9211, "lng": 30.6886, "label": "버가 (Perga)" },
+      { "lat": 37.7831, "lng": 30.2906, "label": "비시디아 안디옥 (Pisidian Antioch)" },
+      { "lat": 38.3420, "lng": 31.4917, "label": "이고니온 (Iconium)" },
+      { "lat": 37.8756, "lng": 32.4846, "label": "루스드라 (Lystra)" },
+      { "lat": 37.7260, "lng": 33.2280, "label": "더베 (Derbe)" },
+      { "lat": 37.8756, "lng": 32.4846, "label": "루스드라 (복귀)" },
+      { "lat": 38.3420, "lng": 31.4917, "label": "이고니온 (복귀)" },
+      { "lat": 37.7831, "lng": 30.2906, "label": "비시디아 안디옥 (복귀)" },
+      { "lat": 36.9211, "lng": 30.6886, "label": "버가 (복귀)" },
+      { "lat": 36.8121, "lng": 30.5608, "label": "앗달리아 (Attalia)" },
+      { "lat": 36.2021, "lng": 36.1566, "label": "안디옥 (귀환)" }
+    ]
+  }
+]
