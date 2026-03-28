@@ -20,9 +20,30 @@ L.Icon.Default.mergeOptions({
 const JERUSALEM_CENTER = [31.7683, 35.2137]
 const DEFAULT_ZOOM = 8
 
-export default function MapView({ onSelectLocation, activeRouteId }) {
+function WaypointNumber({ center, index, color }) {
+  return (
+    <CircleMarker
+      center={center}
+      radius={10}
+      pathOptions={{
+        color: '#fff',
+        fillColor: color,
+        fillOpacity: 1,
+        weight: 2,
+      }}
+    >
+      <Tooltip direction="center" permanent className="waypoint-number">
+        <span style={{ color: '#fff', fontSize: '9px', fontWeight: 700 }}>
+          {index + 1}
+        </span>
+      </Tooltip>
+    </CircleMarker>
+  )
+}
+
+export default function MapView({ onSelectLocation, activeRouteIds }) {
   const { lang } = useLang()
-  const activeRoute = routes.find((r) => r.id === activeRouteId)
+  const activeRoutes = routes.filter((r) => activeRouteIds.has(r.id))
 
   return (
     <MapContainer
@@ -50,38 +71,55 @@ export default function MapView({ onSelectLocation, activeRouteId }) {
         </Marker>
       ))}
 
-      {/* Route polyline + arrows + waypoint dots */}
-      {activeRoute && (
-        <>
-          <Polyline
-            positions={activeRoute.path.map((p) => [p.lat, p.lng])}
-            pathOptions={{
-              color: activeRoute.color,
-              weight: 3.5,
-              opacity: 0.8,
-              dashArray: '8 6',
-            }}
-          />
-          <RouteArrows path={activeRoute.path} color={activeRoute.color} />
-          {activeRoute.path.map((point, i) => (
-            <CircleMarker
-              key={`${activeRoute.id}-${i}`}
-              center={[point.lat, point.lng]}
-              radius={4}
-              pathOptions={{
-                color: activeRoute.color,
-                fillColor: i === 0 ? '#fff' : activeRoute.color,
-                fillOpacity: 1,
-                weight: 2,
-              }}
-            >
-              <Tooltip direction="top" offset={[0, -6]}>
-                {point[`label_${lang}`] || point.label_ko}
-              </Tooltip>
-            </CircleMarker>
-          ))}
-        </>
-      )}
+      {/* Route polylines + arrows + numbered waypoints */}
+      {activeRoutes.map((route) => (
+        <RouteLayer key={route.id} route={route} lang={lang} />
+      ))}
     </MapContainer>
+  )
+}
+
+function RouteLayer({ route, lang }) {
+  const positions = route.path.map((p) => [p.lat, p.lng])
+
+  return (
+    <>
+      <Polyline
+        positions={positions}
+        pathOptions={{
+          color: route.color,
+          weight: 3.5,
+          opacity: 0.8,
+          dashArray: '8 6',
+        }}
+      />
+      <RouteArrows path={route.path} color={route.color} />
+      {route.path.map((point, i) => (
+        <CircleMarker
+          key={`${route.id}-wp-${i}`}
+          center={[point.lat, point.lng]}
+          radius={9}
+          pathOptions={{
+            color: '#fff',
+            fillColor: route.color,
+            fillOpacity: 0.9,
+            weight: 2,
+          }}
+        >
+          <Tooltip
+            direction="center"
+            permanent
+            className="waypoint-label"
+          >
+            <span style={{ color: '#fff', fontSize: '8px', fontWeight: 700 }}>
+              {i + 1}
+            </span>
+          </Tooltip>
+          <Popup>
+            <strong>{i + 1}.</strong> {point[`label_${lang}`] || point.label_ko}
+          </Popup>
+        </CircleMarker>
+      ))}
+    </>
   )
 }
