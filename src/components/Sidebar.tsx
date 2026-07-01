@@ -187,7 +187,7 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
             검색 결과가 없습니다.
           </div>
         )}
-        <div className="hint-row">＋ 를 눌러 여러 지도를 지도 위에서 함께 비교할 수 있어요.</div>
+        <div className="hint-row">＋ 를 누르면 여러 지도를 비교할 수 있습니다.</div>
       </div>
     </>
   )
