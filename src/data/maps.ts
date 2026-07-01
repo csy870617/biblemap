@@ -16,13 +16,19 @@ export interface BibleLocation {
 
 export type Testament = 'OT' | 'NT'
 
+// journey: 순서가 있는 이동 경로(경로선 + 재생)
+// region: 영역/분포(경로선 없음, 지점 표시)
+export type MapKind = 'journey' | 'region'
+
 export interface BibleMapTheme {
   id: string
   title: string // 테마 제목
   subtitle: string // 한 줄 요약
   testament: Testament
+  kind: MapKind
   book: string // 주요 성경 권
-  era: string // 시대(연대 추정)
+  era: string // 시대(연대 표기)
+  year: number // 연표용 대표 연도(음수=BC)
   color: string // 경로/마커 색상
   icon: string // 이모지 아이콘
   summary: string // 테마 개요(말씀 이해 포인트)
@@ -35,8 +41,10 @@ export const THEMES: BibleMapTheme[] = [
     title: '아브라함의 여정',
     subtitle: '갈대아 우르에서 약속의 땅까지',
     testament: 'OT',
+    kind: 'journey',
     book: '창세기 11~25장',
     era: '약 BC 2000년경',
+    year: -2000,
     color: '#d97706',
     icon: '🏕️',
     summary:
@@ -56,8 +64,10 @@ export const THEMES: BibleMapTheme[] = [
     title: '출애굽 경로',
     subtitle: '종살이의 땅에서 시내산을 거쳐',
     testament: 'OT',
+    kind: 'journey',
     book: '출애굽기~신명기',
     era: '약 BC 1446 / 1290년경',
+    year: -1446,
     color: '#dc2626',
     icon: '🔥',
     summary:
@@ -74,12 +84,115 @@ export const THEMES: BibleMapTheme[] = [
     ],
   },
   {
+    id: 'conquest',
+    title: '가나안 정복',
+    subtitle: '여호수아의 약속의 땅 점령',
+    testament: 'OT',
+    kind: 'journey',
+    book: '여호수아 1~12장',
+    era: '약 BC 1400년경',
+    year: -1400,
+    color: '#b45309',
+    icon: '🗡️',
+    summary:
+      '여호수아의 지휘 아래 요단강을 건너 중부→남부→북부 순으로 가나안을 점령해 간 정복 전쟁입니다. 중앙을 먼저 끊고 남북을 차례로 친 전략이 지도에서 한눈에 보입니다.',
+    locations: [
+      { id: 'gilgal', name: '길갈(요단 도하)', nameEn: 'Gilgal', coord: [31.8700, 35.5600], refs: ['여호수아 3~4장'], desc: '요단강이 갈라져 마른 땅으로 건넌 입성 지점. 열두 돌 기념비를 세웁니다.' },
+      { id: 'jericho-c', name: '여리고', nameEn: 'Jericho', coord: [31.8607, 35.4444], refs: ['여호수아 6장'], desc: '엿새를 돌고 이레째 외침으로 성벽이 무너진 첫 승리.' },
+      { id: 'ai', name: '아이', nameEn: 'Ai', coord: [31.9170, 35.2700], refs: ['여호수아 7~8장'], desc: '아간의 범죄로 첫 패배를 겪었으나 회개 후 점령한 곳.' },
+      { id: 'gibeon', name: '기브온', nameEn: 'Gibeon', coord: [31.8460, 35.1840], refs: ['여호수아 9~10장'], desc: '꾀로 화친을 맺은 성읍. 이로 인해 남부 연합군과의 전쟁이 시작됩니다.' },
+      { id: 'aijalon', name: '아얄론 골짜기', nameEn: 'Valley of Aijalon', coord: [31.8600, 35.0200], refs: ['여호수아 10:12-14'], desc: '"태양아 머무르라" — 해와 달이 멈춘 기적이 일어난 남부 전투의 현장.' },
+      { id: 'merom', name: '메롬 물가', nameEn: 'Waters of Merom', coord: [33.0500, 35.5000], refs: ['여호수아 11:1-9'], desc: '북부 연합군을 격파한 결정적 전투지.' },
+      { id: 'hazor', name: '하솔', nameEn: 'Hazor', coord: [33.0170, 35.5680], refs: ['여호수아 11:10-13'], desc: '북부 동맹의 우두머리 성읍. 불사른 유일한 도시.' },
+      { id: 'shiloh-c', name: '실로', nameEn: 'Shiloh', coord: [32.0550, 35.2890], refs: ['여호수아 18:1'], desc: '정복 후 성막을 세우고 땅을 분배한 신앙의 중심지.' },
+    ],
+  },
+  {
+    id: 'tribes',
+    title: '이스라엘 12지파 분배',
+    subtitle: '약속의 땅, 지파별 기업',
+    testament: 'OT',
+    kind: 'region',
+    book: '여호수아 13~21장',
+    era: '약 BC 1380년경',
+    year: -1380,
+    color: '#0d9488',
+    icon: '🧩',
+    summary:
+      '정복한 가나안 땅을 열두 지파에게 제비뽑아 나누어 준 기업의 분포입니다. 지파의 위치를 알면 이후 사사기·왕국 시대의 사건들이 일어난 무대가 명확해집니다. (영역의 대략적 중심을 표시)',
+    locations: [
+      { id: 'asher', name: '아셀', nameEn: 'Asher', coord: [32.9500, 35.1000], refs: ['여호수아 19:24-31'], desc: '북서쪽 지중해 해안 지역.' },
+      { id: 'naphtali', name: '납달리', nameEn: 'Naphtali', coord: [33.0000, 35.5000], refs: ['여호수아 19:32-39'], desc: '갈릴리 북동부. 훗날 예수님 사역의 중심이 됩니다.' },
+      { id: 'zebulun', name: '스불론', nameEn: 'Zebulun', coord: [32.8000, 35.3000], refs: ['여호수아 19:10-16'], desc: '갈릴리 남서부. 나사렛이 이 지역에 속합니다.' },
+      { id: 'issachar', name: '잇사갈', nameEn: 'Issachar', coord: [32.6000, 35.4500], refs: ['여호수아 19:17-23'], desc: '비옥한 이스르엘 골짜기 일대.' },
+      { id: 'manasseh-w', name: '므낫세(서편 반)', nameEn: 'Manasseh (West)', coord: [32.4000, 35.2000], refs: ['여호수아 17:1-13'], desc: '중부 산지 북쪽.' },
+      { id: 'manasseh-e', name: '므낫세(동편 반)', nameEn: 'Manasseh (East)', coord: [32.7000, 35.9000], refs: ['여호수아 13:29-31'], desc: '요단 동편 바산 지역.' },
+      { id: 'ephraim', name: '에브라임', nameEn: 'Ephraim', coord: [32.1000, 35.2500], refs: ['여호수아 16장'], desc: '중부 산지. 실로와 세겜이 속한 강력한 지파.' },
+      { id: 'gad', name: '갓', nameEn: 'Gad', coord: [32.1000, 35.7500], refs: ['여호수아 13:24-28'], desc: '요단 동편 길르앗 지역.' },
+      { id: 'dan', name: '단', nameEn: 'Dan', coord: [31.9500, 34.9000], refs: ['여호수아 19:40-48'], desc: '본래 서쪽 해안에 분배되었으나 후에 북쪽으로 이주.' },
+      { id: 'benjamin', name: '베냐민', nameEn: 'Benjamin', coord: [31.8500, 35.2200], refs: ['여호수아 18:11-28'], desc: '예루살렘을 포함한 중앙의 작은 지파.' },
+      { id: 'reuben', name: '르우벤', nameEn: 'Reuben', coord: [31.5000, 35.7000], refs: ['여호수아 13:15-23'], desc: '요단 동편 남쪽, 사해 동편 고원.' },
+      { id: 'judah', name: '유다', nameEn: 'Judah', coord: [31.5000, 35.0000], refs: ['여호수아 15장'], desc: '남부의 가장 큰 기업. 다윗 왕가와 메시아의 지파.' },
+      { id: 'simeon', name: '시므온', nameEn: 'Simeon', coord: [31.2000, 34.8000], refs: ['여호수아 19:1-9'], desc: '유다 영토 안 남서쪽에 분포한 지파.' },
+      { id: 'levi', name: '레위(기업 없음)', nameEn: 'Levi', coord: [32.0550, 35.2890], refs: ['여호수아 21장'], desc: '땅 대신 각 지파 가운데 48성읍을 받은 제사장 지파. (위치는 성막의 실로로 표시)' },
+    ],
+  },
+  {
+    id: 'divided',
+    title: '분열 왕국',
+    subtitle: '북이스라엘과 남유다',
+    testament: 'OT',
+    kind: 'region',
+    book: '열왕기상~하',
+    era: '약 BC 930~586년',
+    year: -930,
+    color: '#9333ea',
+    icon: '👑',
+    summary:
+      '솔로몬 사후 한 나라가 북이스라엘(수도 사마리아)과 남유다(수도 예루살렘)로 갈라진 시대입니다. 두 왕국의 주요 도시를 지도로 보면 열왕기·예언서의 무대가 정리됩니다.',
+    locations: [
+      { id: 'jerusalem-d', name: '예루살렘 〔남유다 수도〕', nameEn: 'Jerusalem', coord: [31.7683, 35.2137], refs: ['열왕기상 12:21'], desc: '남유다의 수도이자 성전이 있는 도시.' },
+      { id: 'hebron-d', name: '헤브론 〔남유다〕', nameEn: 'Hebron', coord: [31.5326, 35.0998], refs: ['열왕기상 2:11'], desc: '유다 남부의 주요 성읍.' },
+      { id: 'lachish', name: '라기스 〔남유다〕', nameEn: 'Lachish', coord: [31.5650, 34.8490], refs: ['열왕기하 18:13-14'], desc: '유다의 군사 요새. 앗수르 산헤립의 공격을 받습니다.' },
+      { id: 'beersheba-d', name: '브엘세바 〔남유다〕', nameEn: 'Beersheba', coord: [31.2518, 34.7913], refs: ['열왕기상 19:3'], desc: '유다 최남단 경계 도시.' },
+      { id: 'samaria', name: '사마리아 〔북이스라엘 수도〕', nameEn: 'Samaria', coord: [32.2806, 35.1900], refs: ['열왕기상 16:24'], desc: '오므리가 세운 북이스라엘의 수도. 아합과 이세벨의 거점.' },
+      { id: 'shechem-d', name: '세겜 〔북이스라엘〕', nameEn: 'Shechem', coord: [32.2140, 35.2790], refs: ['열왕기상 12:25'], desc: '여로보암이 처음 도읍으로 삼은 곳.' },
+      { id: 'jezreel', name: '이스르엘 〔북이스라엘〕', nameEn: 'Jezreel', coord: [32.5570, 35.3280], refs: ['열왕기상 21장'], desc: '아합의 별궁이 있던 곳. 나봇의 포도원 사건의 현장.' },
+      { id: 'bethel-d', name: '벧엘 〔북이스라엘〕', nameEn: 'Bethel', coord: [31.9308, 35.2206], refs: ['열왕기상 12:28-29'], desc: '여로보암이 금송아지를 세운 남쪽 예배처.' },
+      { id: 'dan-d', name: '단 〔북이스라엘〕', nameEn: 'Dan', coord: [33.2486, 35.6528], refs: ['열왕기상 12:28-29'], desc: '여로보암이 금송아지를 세운 북쪽 예배처. 나라의 최북단.' },
+      { id: 'ramoth', name: '길르앗 라못 〔북이스라엘〕', nameEn: 'Ramoth-Gilead', coord: [32.6000, 35.8600], refs: ['열왕기상 22장'], desc: '아람과의 전쟁터. 아합이 전사한 곳.' },
+    ],
+  },
+  {
+    id: 'exile',
+    title: '바벨론 포로',
+    subtitle: '예루살렘에서 바벨론으로',
+    testament: 'OT',
+    kind: 'journey',
+    book: '열왕기하 25장 · 다니엘 · 에스겔',
+    era: '약 BC 586년',
+    year: -586,
+    color: '#1d4ed8',
+    icon: '⛓️',
+    summary:
+      '예루살렘이 함락되고 유다 백성이 바벨론으로 끌려간 포로의 길입니다. 약 1,500km에 이르는 강제 이주의 경로를 보면 "바벨론 강가에서 울었도다"(시 137편)의 정서가 와닿습니다.',
+    locations: [
+      { id: 'jerusalem-e', name: '예루살렘', nameEn: 'Jerusalem', coord: [31.7683, 35.2137], refs: ['열왕기하 25:1-10'], desc: '바벨론 느부갓네살에게 함락되어 성전이 불탄 멸망의 시작점.' },
+      { id: 'riblah', name: '리블라', nameEn: 'Riblah', coord: [34.4610, 36.5480], refs: ['열왕기하 25:6-7'], desc: '시드기야가 끌려와 재판받고 두 눈이 뽑힌 느부갓네살의 진영.' },
+      { id: 'mari', name: '마리(유프라테스 길)', nameEn: 'Mari', coord: [34.5500, 40.8900], refs: ['시편 137:1'], desc: '유프라테스 강을 따라 내려가는 포로 행렬의 경유지.' },
+      { id: 'babylon', name: '바벨론', nameEn: 'Babylon', coord: [32.5424, 44.4208], refs: ['다니엘 1:1-7', '시편 137편'], desc: '포로 생활의 중심 도시. 다니엘과 세 친구가 신앙을 지킨 제국의 수도.' },
+      { id: 'telabib', name: '델아빕(그발 강가)', nameEn: 'Tel-abib, Chebar', coord: [32.1300, 45.1900], refs: ['에스겔 1:1-3', '에스겔 3:15'], desc: '포로 공동체가 정착한 운하 지역. 에스겔이 환상을 본 곳.' },
+    ],
+  },
+  {
     id: 'jesus',
     title: '예수님의 생애와 사역',
     subtitle: '베들레헴에서 예루살렘까지',
     testament: 'NT',
+    kind: 'journey',
     book: '4복음서',
     era: '약 BC 4 ~ AD 30',
+    year: 27,
     color: '#7c3aed',
     icon: '✝️',
     summary:
@@ -102,8 +215,10 @@ export const THEMES: BibleMapTheme[] = [
     title: '바울의 1차 전도여행',
     subtitle: '구브로와 갈라디아 지역',
     testament: 'NT',
+    kind: 'journey',
     book: '사도행전 13~14장',
     era: '약 AD 46~48',
+    year: 47,
     color: '#0891b2',
     icon: '⛵',
     summary:
@@ -125,8 +240,10 @@ export const THEMES: BibleMapTheme[] = [
     title: '바울의 2차 전도여행',
     subtitle: '복음이 유럽으로 건너가다',
     testament: 'NT',
+    kind: 'journey',
     book: '사도행전 15:36~18:22',
     era: '약 AD 49~52',
+    year: 50,
     color: '#16a34a',
     icon: '🌍',
     summary:
@@ -148,8 +265,10 @@ export const THEMES: BibleMapTheme[] = [
     title: '바울의 3차 전도여행',
     subtitle: '에베소 사역과 교회 양육',
     testament: 'NT',
+    kind: 'journey',
     book: '사도행전 18:23~21:17',
     era: '약 AD 53~57',
+    year: 54,
     color: '#ca8a04',
     icon: '📜',
     summary:
@@ -171,8 +290,10 @@ export const THEMES: BibleMapTheme[] = [
     title: '바울의 로마 압송 항해',
     subtitle: '죄수가 되어 제국의 심장으로',
     testament: 'NT',
+    kind: 'journey',
     book: '사도행전 27~28장',
     era: '약 AD 59~60',
+    year: 59,
     color: '#475569',
     icon: '🚢',
     summary:

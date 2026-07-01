@@ -242,10 +242,19 @@ body {
   display: block;
 }
 
+/* ---------- Main (map + timeline) ---------- */
+.main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 /* ---------- Map ---------- */
 .map-wrap {
   flex: 1;
-  height: 100%;
+  min-height: 0;
   position: relative;
 }
 .leaflet-container {
@@ -340,6 +349,261 @@ body {
   font-size: 13.5px;
 }
 
+/* ---------- Compare button ---------- */
+.compare-btn {
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  align-self: center;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+.compare-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.compare-btn.on {
+  color: #04293a;
+  font-weight: 800;
+}
+.theme-card.selected {
+  background: rgba(56, 189, 248, 0.06);
+}
+.hint-row {
+  padding: 14px 20px 4px;
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ---------- Region label markers ---------- */
+.region-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  border: 1.5px solid;
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.region-label i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex: 0 0 7px;
+}
+.region-label.dim {
+  opacity: 0.5;
+}
+
+/* ---------- Leaflet controls (dark) ---------- */
+.leaflet-control-layers {
+  background: var(--panel) !important;
+  color: var(--text);
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+}
+.leaflet-control-layers-expanded {
+  padding: 8px 10px !important;
+}
+.leaflet-control-layers label {
+  color: var(--text);
+  font-size: 13px;
+}
+.leaflet-bar a {
+  background: var(--panel);
+  color: var(--text);
+  border-color: var(--border);
+}
+.leaflet-bar a:hover {
+  background: var(--panel-2);
+}
+
+/* ---------- Timeline ---------- */
+.timeline {
+  height: 78px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  position: relative;
+  flex: 0 0 78px;
+}
+.timeline-label {
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.timeline-track {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 0;
+  bottom: 0;
+}
+.tl-tick {
+  position: absolute;
+  bottom: 0;
+  top: 22px;
+  transform: translateX(-50%);
+  border-left: 1px dashed var(--border);
+}
+.tl-tick span {
+  position: absolute;
+  bottom: 3px;
+  left: 4px;
+  font-size: 10px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.tl-dot {
+  position: absolute;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  padding: 0;
+}
+.tl-dot:hover {
+  transform: translateX(-50%) scale(1.15);
+}
+.tl-dot.selected {
+  border-color: #fff;
+}
+.tl-dot.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.6);
+  z-index: 4;
+}
+
+/* ---------- Verse panel ---------- */
+.verse-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.verse-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: min(560px, 100%);
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+}
+.verse-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.verse-ref {
+  font-size: 16px;
+  font-weight: 700;
+}
+.verse-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lang-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.lang-toggle button {
+  background: var(--bg);
+  color: var(--muted);
+  border: none;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.lang-toggle button.on {
+  background: var(--accent);
+  color: #04293a;
+  font-weight: 700;
+}
+.verse-close {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+}
+.verse-body {
+  padding: 16px;
+  overflow-y: auto;
+  line-height: 1.8;
+  font-size: 14.5px;
+}
+.verse-line {
+  margin: 0 0 8px;
+}
+.verse-line sup {
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 3px;
+}
+.verse-msg {
+  color: var(--muted);
+  line-height: 1.7;
+}
+.verse-src {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.verse-ext {
+  display: block;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+}
+.verse-ext:hover {
+  text-decoration: underline;
+}
+
+/* ref-chip를 클릭 가능한 버튼으로 */
+button.ref-chip {
+  cursor: pointer;
+  font-family: inherit;
+}
+button.ref-chip:hover {
+  background: var(--panel-2);
+  border-color: var(--accent);
+}
+
 @media (max-width: 720px) {
   .app {
     flex-direction: column;
@@ -347,9 +611,9 @@ body {
   .sidebar {
     width: 100%;
     min-width: 0;
-    height: 48%;
+    height: 46%;
   }
-  .map-wrap {
-    height: 52%;
+  .main {
+    height: 54%;
   }
 }

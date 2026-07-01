@@ -3,11 +3,13 @@ import type { BibleMapTheme } from '../data/maps'
 import { THEMES } from '../data/maps'
 
 interface Props {
-  selectedThemeId: string | null
-  onSelectTheme: (id: string) => void
+  activeId: string | null
+  selectedIds: string[]
+  onOpenTheme: (id: string) => void // 단독 보기(활성화)
+  onToggleCompare: (id: string) => void // 비교 목록 토글
 }
 
-export default function Sidebar({ selectedThemeId, onSelectTheme }: Props) {
+export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCompare }: Props) {
   const [query, setQuery] = useState('')
 
   const filtered = useMemo(() => {
@@ -24,23 +26,38 @@ export default function Sidebar({ selectedThemeId, onSelectTheme }: Props) {
   const ot = filtered.filter((t) => t.testament === 'OT')
   const nt = filtered.filter((t) => t.testament === 'NT')
 
-  const card = (t: BibleMapTheme) => (
-    <div
-      key={t.id}
-      className={`theme-card${t.id === selectedThemeId ? ' active' : ''}`}
-      onClick={() => onSelectTheme(t.id)}
-      style={t.id === selectedThemeId ? { borderLeftColor: t.color } : undefined}
-    >
-      <div className="icon">{t.icon}</div>
-      <div className="info">
-        <div className="title">{t.title}</div>
-        <div className="sub">{t.subtitle}</div>
-        <div className="meta">
-          {t.book} · {t.era}
+  const card = (t: BibleMapTheme) => {
+    const isActive = t.id === activeId
+    const isSelected = selectedIds.includes(t.id)
+    return (
+      <div
+        key={t.id}
+        className={`theme-card${isActive ? ' active' : ''}${isSelected && !isActive ? ' selected' : ''}`}
+        onClick={() => onOpenTheme(t.id)}
+        style={isActive ? { borderLeftColor: t.color } : isSelected ? { borderLeftColor: t.color, opacity: 0.95 } : undefined}
+      >
+        <div className="icon">{t.icon}</div>
+        <div className="info">
+          <div className="title">{t.title}</div>
+          <div className="sub">{t.subtitle}</div>
+          <div className="meta">
+            {t.book} · {t.era}
+          </div>
         </div>
+        <button
+          className={`compare-btn${isSelected ? ' on' : ''}`}
+          title={isSelected ? '비교 목록에서 제거' : '비교 목록에 추가'}
+          style={isSelected ? { background: t.color, borderColor: t.color } : undefined}
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleCompare(t.id)
+          }}
+        >
+          {isSelected ? '✓' : '＋'}
+        </button>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <>
@@ -69,6 +86,7 @@ export default function Sidebar({ selectedThemeId, onSelectTheme }: Props) {
             검색 결과가 없습니다.
           </div>
         )}
+        <div className="hint-row">＋ 를 눌러 여러 지도를 지도 위에서 함께 비교할 수 있어요.</div>
       </div>
     </>
   )

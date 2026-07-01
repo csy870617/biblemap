@@ -1,16 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import MapView from './components/MapView'
 import Sidebar from './components/Sidebar'
+import Timeline from './components/Timeline'
+import VersePanel from './components/VersePanel'
 import { THEMES } from './data/maps'
 
 export default function App() {
-  const [selectedThemeId, setSelectedThemeId] = useState<string | null>(null)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [activeId, setActiveId] = useState<string | null>(null)
   const [selectedLocId, setSelectedLocId] = useState<string | null>(null)
   const [playPos, setPlayPos] = useState<number | null>(null)
+  const [verseRef, setVerseRef] = useState<string | null>(null)
   const rafRef = useRef<number | null>(null)
   const lastTsRef = useRef<number>(0)
 
-  const theme = THEMES.find((t) => t.id === selectedThemeId) ?? null
+  const themes = selectedIds.map((id) => THEMES.find((t) => t.id === id)!).filter(Boolean)
+  const active = THEMES.find((t) => t.id === activeId) ?? null
 
   const stopPlay = useCallback(() => {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
@@ -18,24 +23,46 @@ export default function App() {
     setPlayPos(null)
   }, [])
 
-  const handleSelectTheme = (id: string) => {
+  // 단독 보기: 해당 테마만 표시하고 활성화
+  const openTheme = (id: string) => {
     stopPlay()
-    setSelectedThemeId(id)
+    setSelectedIds([id])
+    setActiveId(id)
     setSelectedLocId(null)
   }
 
-  const handleSelectLoc = (id: string) => {
+  // 비교 목록 토글
+  const toggleCompare = (id: string) => {
+    stopPlay()
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) {
+        const next = prev.filter((x) => x !== id)
+        if (activeId === id) setActiveId(next[0] ?? null)
+        return next
+      }
+      if (!activeId) setActiveId(id)
+      return [...prev, id]
+    })
+  }
+
+  const selectLoc = (id: string) => {
     stopPlay()
     setSelectedLocId(id)
   }
 
-  // 여정 재생: requestAnimationFrame으로 진행도 증가
+  // 비교 중 특정 테마를 활성으로 전환(지도 마커 클릭 등)
+  const activateTheme = (id: string) => {
+    stopPlay()
+    setActiveId(id)
+    setSelectedLocId(null)
+  }
+
   const play = useCallback(() => {
-    if (!theme) return
-    const last = theme.locations.length - 1
+    if (!active || active.kind !== 'journey') return
+    const last = active.locations.length - 1
     if (last <= 0) return
     stopPlay()
-    const SPEED = 0.55 // 초당 진행 지점 수
+    const SPEED = 0.55
     let pos = 0
     setPlayPos(0)
     setSelectedLocId(null)
@@ -49,7 +76,6 @@ export default function App() {
       if (pos >= last) {
         setPlayPos(last)
         rafRef.current = null
-        // 재생 종료 후 잠시 뒤 정지 상태(전체 경로)로 복귀
         window.setTimeout(() => setPlayPos(null), 900)
         return
       }
@@ -57,34 +83,40 @@ export default function App() {
       rafRef.current = requestAnimationFrame(step)
     }
     rafRef.current = requestAnimationFrame(step)
-  }, [theme, stopPlay])
+  }, [active, stopPlay])
 
   useEffect(() => () => stopPlay(), [stopPlay])
 
   return (
     <div className="app">
       <aside className="sidebar">
-        <Sidebar selectedThemeId={selectedThemeId} onSelectTheme={handleSelectTheme} />
+        <Sidebar
+          activeId={activeId}
+          selectedIds={selectedIds}
+          onOpenTheme={openTheme}
+          onToggleCompare={toggleCompare}
+        />
 
-        {theme && (
+        {active && (
           <div className="detail">
             <div className="head">
               <div className="ttl">
-                {theme.icon} {theme.title}
+                {active.icon} {active.title}
               </div>
-              <div className="smy">{theme.summary}</div>
+              <div className="smy">{active.summary}</div>
             </div>
 
             <div className="player">
-              {playPos === null ? (
-                <button className="btn primary" onClick={play}>
-                  ▶ 여정 재생
-                </button>
-              ) : (
-                <button className="btn" onClick={stopPlay}>
-                  ■ 정지
-                </button>
-              )}
+              {active.kind === 'journey' &&
+                (playPos === null ? (
+                  <button className="btn primary" onClick={play}>
+                    ▶ 여정 재생
+                  </button>
+                ) : (
+                  <button className="btn" onClick={stopPlay}>
+                    ■ 정지
+                  </button>
+                ))}
               <button
                 className="btn"
                 onClick={() => {
@@ -97,14 +129,14 @@ export default function App() {
             </div>
 
             <div className="loc-list">
-              {theme.locations.map((loc, idx) => (
+              {active.locations.map((loc, idx) => (
                 <div
                   key={loc.id}
                   className={`loc-item${loc.id === selectedLocId ? ' active' : ''}`}
-                  onClick={() => handleSelectLoc(loc.id)}
+                  onClick={() => selectLoc(loc.id)}
                 >
-                  <div className="num" style={{ background: theme.color }}>
-                    {idx + 1}
+                  <div className="num" style={{ background: active.color }}>
+                    {active.kind === 'journey' ? idx + 1 : '•'}
                   </div>
                   <div className="body">
                     <div className="nm">
@@ -114,9 +146,17 @@ export default function App() {
                     <div className="en">{loc.nameEn}</div>
                     <div className="refs">
                       {loc.refs.map((r) => (
-                        <span className="ref-chip" key={r}>
+                        <button
+                          className="ref-chip"
+                          key={r}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setVerseRef(r)
+                          }}
+                          title="본문 보기"
+                        >
                           {r}
-                        </span>
+                        </button>
                       ))}
                     </div>
                     <div className="ds">{loc.desc}</div>
@@ -128,12 +168,19 @@ export default function App() {
         )}
       </aside>
 
-      <MapView
-        theme={theme}
-        selectedLocId={selectedLocId}
-        onSelectLoc={handleSelectLoc}
-        playPos={playPos}
-      />
+      <div className="main">
+        <MapView
+          themes={themes}
+          activeId={activeId}
+          selectedLocId={selectedLocId}
+          onSelectLoc={selectLoc}
+          onSelectTheme={activateTheme}
+          playPos={playPos}
+        />
+        <Timeline activeId={activeId} selectedIds={selectedIds} onSelect={openTheme} />
+      </div>
+
+      <VersePanel refStr={verseRef} onClose={() => setVerseRef(null)} />
     </div>
   )
 }
