@@ -155,15 +155,31 @@ button {
   opacity: 0.9;
 }
 
-/* 핵심지명 안의 소주제 묶음 제목(예: "I. 창세기~출애굽, 광야 시대") */
-.subsection-label {
+/* 핵심지명 안의 소주제 묶음 제목(예: "I. 창세기~출애굽, 광야 시대"). 자체도 접고 펼 수 있음 */
+.subsection-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border);
+  font: inherit;
   font-size: 10.5px;
   font-weight: 700;
   color: var(--muted);
-  opacity: 0.75;
-  padding: 10px 20px 4px 28px;
-  border-top: 1px solid var(--border);
+  opacity: 0.85;
+  padding: 10px 20px 8px 28px;
   margin-top: 4px;
+  cursor: pointer;
+}
+.subsection-toggle:hover {
+  color: var(--text);
+  opacity: 1;
+}
+.subsection-toggle .chevron {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .theme-card {
