@@ -885,8 +885,9 @@ button.ref-chip:hover {
     transform: translateX(0);
   }
 
-  /* 닫기(✕) 버튼이 브랜드 제목과 겹치지 않도록 여백 확보 */
-  .sidebar .brand {
+  /* 닫기(✕) 버튼이 브랜드 제목·뒤로가기 버튼과 겹치지 않도록 여백 확보 */
+  .sidebar .brand,
+  .sidebar .detail-nav {
     padding-left: 64px;
   }
 
