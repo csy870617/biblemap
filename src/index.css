@@ -155,6 +155,17 @@ button {
   opacity: 0.9;
 }
 
+/* 핵심지명 안의 소주제 묶음 제목(예: "I. 창세기~출애굽, 광야 시대") */
+.subsection-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--muted);
+  opacity: 0.75;
+  padding: 10px 20px 4px 28px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+
 .theme-card {
   display: flex;
   gap: 12px;
