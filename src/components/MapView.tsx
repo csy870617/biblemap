@@ -121,7 +121,15 @@ function MapController({
   useEffect(() => {
     if (themes.length === 0) return
     const pts = themes.flatMap((t) => t.locations.map((l) => l.coord))
-    map.fitBounds(L.latLngBounds(pts), { padding: [60, 60], maxZoom: 8 })
+    const bounds = L.latLngBounds(pts)
+    // 지점들이 서로 아주 가까우면(핵심지명처럼 1~2곳뿐인 경우) fitBounds가 최대 줌까지
+    // 확대해 버려 주변 지도를 함께 보기 어려우므로, 이때는 적당한 고정 줌으로 이동합니다.
+    const span = Math.max(bounds.getNorth() - bounds.getSouth(), bounds.getEast() - bounds.getWest())
+    if (span < 0.6) {
+      map.flyTo(bounds.getCenter(), 7, { duration: 0.8 })
+    } else {
+      map.fitBounds(bounds, { padding: [60, 60], maxZoom: 8 })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boundsKey, map])
 
