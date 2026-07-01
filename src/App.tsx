@@ -41,12 +41,13 @@ export default function App() {
 
   const backToList = () => setSidebarView('list')
 
-  // 핵심지명 선택: 상세 화면으로 넘어가지 않고 목록(핵심지명 펼침 상태)에 머문 채 지도에만 표시
+  // 핵심지명/성지순례 선택: 상세 화면으로 넘어가지 않고 목록(펼침 상태)에 머문 채 지도에만 표시
   const selectKeyPlace = (id: string) => {
     stopPlay()
     setSelectedIds([id])
     setActiveId(id)
     setSelectedLocId(null)
+    setMenuOpen(false) // 모바일: 선택하면 지도가 바로 보이도록 드로어를 닫음
   }
 
   // 비교 목록 토글
