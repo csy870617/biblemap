@@ -1,7 +1,14 @@
 import { useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, Marker, Polyline, Popup, LayersControl, useMap } from 'react-leaflet'
+import GoogleLayer from 'react-leaflet-google-layer'
 import L from 'leaflet'
 import type { BibleMapTheme, LngLat } from '../data/maps'
+
+// Google Maps API 키(선택). .env 의 VITE_GOOGLE_MAPS_API_KEY 로 주입.
+const GOOGLE_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+const hasGoogle = !!GOOGLE_KEY
+// 구글 지도 지명을 한국어로 표시
+const googleConf = { apiKey: GOOGLE_KEY ?? '', language: 'ko', region: 'KR' }
 
 interface Props {
   themes: BibleMapTheme[] // 지도에 표시할 테마들(비교 모드면 여러 개)
@@ -185,20 +192,43 @@ export default function MapView(props: Props) {
     <div className="map-wrap">
       <MapContainer center={[33, 33]} zoom={5} scrollWheelZoom worldCopyJump>
         <LayersControl position="bottomright">
-          <LayersControl.BaseLayer checked name="일반 지도">
+          {/* 구글 지도 (API 키가 있을 때만) — 한국어 지명 */}
+          {hasGoogle && (
+            <>
+              <LayersControl.BaseLayer checked name="구글 지도 (한글)">
+                <GoogleLayer apiKey={GOOGLE_KEY!} type="roadmap" googleMapsLoaderConf={googleConf} />
+              </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer name="구글 위성 (한글)">
+                <GoogleLayer apiKey={GOOGLE_KEY!} type="hybrid" googleMapsLoaderConf={googleConf} />
+              </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer name="구글 지형 (한글)">
+                <GoogleLayer apiKey={GOOGLE_KEY!} type="terrain" googleMapsLoaderConf={googleConf} />
+              </LayersControl.BaseLayer>
+            </>
+          )}
+
+          {/* 무료 지도 — 지명 영어 (Wikimedia osm-intl), 구글 키 없으면 기본값 */}
+          <LayersControl.BaseLayer checked={!hasGoogle} name="일반 지도 (영문)">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>'
+              url="https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
+              maxZoom={18}
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="일반 지도 (현지어)">
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
           </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="지형 지도">
+          <LayersControl.BaseLayer name="지형 지도 (OpenTopo)">
             <TileLayer
               attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
               url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
               maxZoom={17}
             />
           </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="위성 사진">
+          <LayersControl.BaseLayer name="위성 사진 (Esri)">
             <TileLayer
               attribution="Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics"
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"

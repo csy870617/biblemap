@@ -11,7 +11,9 @@
 - **여러 지도 비교** — `＋` 버튼으로 여러 여정을 지도 위에 색깔별로 동시에 표시 (예: 바울 1·2·3차)
 - **성경 본문 연동** — 구절 칩을 누르면 실제 본문을 팝업으로 표시 (한국어/영어 전환, [getbible.net](https://getbible.net) API)
 - **연대표(타임라인)** — BC 2000 ~ AD 100 시대순으로 지도를 배치, 클릭해 이동
-- **베이스맵 전환** — 일반 지도 / 지형 지도 / 위성 사진 (우하단 레이어 버튼)
+- **베이스맵 전환** — 우하단 레이어 버튼으로 배경 지도 선택
+  - 무료(키 불필요): **영문 지명**(Wikimedia) · **현지어**(OSM) · 지형(OpenTopo) · 위성(Esri)
+  - **구글 지도**(한글 지명): API 키를 넣으면 도로/위성/지형 사용 가능 (아래 참고)
 - **검색** — 지명·성경 구절·테마로 빠르게 찾기 (예: `에베소`, `출애굽`, `사도행전 27`)
 - **현대 지명 병기** — 옛 지명과 오늘날 위치를 함께 표시
 
@@ -30,6 +32,26 @@ GitHub Pages에 배포합니다.
 > 권한이 허용된 경우 위 설정 없이도 첫 배포 시 활성화될 수 있습니다.
 > 배포 진행 상황은 저장소 **Actions** 탭에서 볼 수 있습니다.
 
+## 🗺️ 배경 지도 (구글 지도 · 언어)
+
+기본 배경은 **영문 지명 무료 지도**입니다(별도 설정 불필요). 성경 땅의 지명이 히브리어·아랍어가
+아닌 영어로 표시됩니다. "현지어" 레이어를 고르면 원어 지명으로 볼 수 있습니다.
+
+**구글 지도(한글 지명)를 배경으로 쓰려면** Google Maps Platform API 키가 필요합니다
+(결제 계정 연결 필수, 매월 무료 크레딧 제공):
+
+```bash
+cp .env.example .env
+# .env 에 VITE_GOOGLE_MAPS_API_KEY=발급받은키 입력 후 재실행
+```
+
+키 발급: [Google Cloud Console](https://console.cloud.google.com/) → **Maps JavaScript API**
+사용 설정 → API 키 생성 → (권장) HTTP 리퍼러 제한 설정. 키가 있으면 구글 지도가 배경 기본값이
+되고 지명이 한국어로 나옵니다. 키가 없으면 무료 지도로 자동 동작합니다.
+
+> 배포(GitHub Pages)에서 구글 지도를 쓰려면 Actions에 `VITE_GOOGLE_MAPS_API_KEY`를
+> 리포지토리 시크릿/변수로 추가하고 빌드 스텝에 주입해야 합니다.
+
 ## 🚀 로컬 실행
 
 ```bash
@@ -42,7 +64,8 @@ npm run preview  # 빌드 결과 미리보기
 ## 🧱 기술 스택
 
 - Vite + React + TypeScript
-- Leaflet + OpenStreetMap / OpenTopoMap / Esri (무료 타일, API 키 불필요)
+- Leaflet + OpenStreetMap(영문/현지어) / OpenTopoMap / Esri (무료, 키 불필요)
+- 선택: 구글 지도 (react-leaflet-google-layer, API 키 필요)
 - 성경 본문: getbible.net v2 (런타임 조회, 실패 시 BibleGateway 링크로 대체)
 
 ## 🗂️ 구조
