@@ -85,43 +85,28 @@ export default function Timeline({ activeId, selectedIds, onSelect }: Props) {
           </div>
         ))}
 
-        {/* 테마 마커(단일) / 묶음 마커(다수) */}
+        {/* 테마 마커. 단일/묶음 모두 먼저 눌러서 주제를 확인한 뒤 골라 선택합니다. */}
         {CLUSTERS.map((cluster, i) => {
           const bottom = i % 2 === 0 ? '22px' : '2px'
           const left = `${pct(cluster.year)}%`
-
-          if (cluster.themes.length === 1) {
-            const th = cluster.themes[0]
-            const active = th.id === activeId
-            const selected = selectedIds.includes(th.id)
-            return (
-              <button
-                key={cluster.id}
-                className={`tl-dot${active ? ' active' : ''}${selected ? ' selected' : ''}`}
-                style={{ left, bottom, background: th.color }}
-                title={`${th.title} · ${th.era}`}
-                onClick={() => pick(th.id)}
-              >
-                <span className="tl-emoji">{th.icon}</span>
-              </button>
-            )
-          }
-
+          const isSolo = cluster.themes.length === 1
           const hasActive = cluster.themes.some((t) => t.id === activeId)
+          const hasSelected = cluster.themes.some((t) => selectedIds.includes(t.id))
           const isOpen = openCluster === cluster.id
           const clusterPct = pct(cluster.year)
           // 화면 가장자리에 가까운 묶음은 팝오버가 잘리지 않도록 정렬 방향을 바꿈
           const align = clusterPct > 75 ? 'align-right' : clusterPct < 25 ? 'align-left' : 'align-center'
+
           return (
             <div key={cluster.id} className="tl-cluster-wrap" style={{ left, bottom }}>
               <button
-                className={`tl-dot tl-cluster${hasActive ? ' active' : ''}`}
+                className={`tl-dot${isSolo ? '' : ' tl-cluster'}${hasActive ? ' active' : ''}${isSolo && hasSelected ? ' selected' : ''}`}
                 style={{ background: cluster.themes[0].color }}
-                title={`${cluster.themes.length}개 테마 · 눌러서 선택`}
+                title={isSolo ? `${cluster.themes[0].title} · ${cluster.themes[0].era}` : `${cluster.themes.length}개 테마 · 눌러서 선택`}
                 onClick={() => setOpenCluster(isOpen ? null : cluster.id)}
                 aria-expanded={isOpen}
               >
-                {cluster.themes.length}
+                {isSolo ? <span className="tl-emoji">{cluster.themes[0].icon}</span> : cluster.themes.length}
               </button>
               {isOpen && (
                 <div className={`tl-popover ${align}`}>
