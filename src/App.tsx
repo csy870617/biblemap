@@ -77,6 +77,7 @@ export default function App() {
     let pos = 0
     setPlayPos(0)
     setSelectedLocId(null)
+    setMenuOpen(false) // 모바일: 재생을 누르면 드로어를 닫아 지도가 바로 보이게 함
     lastTsRef.current = 0
 
     const step = (ts: number) => {

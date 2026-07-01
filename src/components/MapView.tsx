@@ -98,10 +98,13 @@ function MapController({
   }, [selectedLocId, active, map])
 
   // 재생 카메라 추적
+  // playPos 는 매 프레임(rAF)마다 갱신되므로, 여기서 또 애니메이션을 걸면
+  // 이전 이동이 끝나기 전에 계속 새로 시작되어 화면이 흔들리게 됩니다.
+  // 애니메이션 없이 즉시 이동시켜야 부드럽게 따라갑니다.
   useEffect(() => {
     if (!active || playPos === null) return
     const pos = positionAt(active.locations.map((l) => l.coord), playPos)
-    map.panTo(pos, { animate: true, duration: 0.4 })
+    map.panTo(pos, { animate: false })
   }, [playPos, active, map])
 
   return null
