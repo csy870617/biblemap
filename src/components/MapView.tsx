@@ -1,23 +1,18 @@
-import { lazy, Suspense, useEffect, useMemo } from 'react'
-import { MapContainer, TileLayer, Marker, Polyline, Popup, LayersControl, useMap } from 'react-leaflet'
-import GoogleLayer from 'react-leaflet-google-layer'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl, useMap } from 'react-leaflet'
 import L from 'leaflet'
+import type { BibleMapTheme, LngLat } from '../data/maps'
+import type { MapLang } from './MapTilerLayer'
 
 // MapTiler(벡터/maplibre)는 무거우므로 키가 있을 때만 지연 로딩
 const MapTilerLayer = lazy(() => import('./MapTilerLayer'))
-import type { BibleMapTheme, LngLat } from '../data/maps'
 
-// Google Maps API 키(선택). .env 의 VITE_GOOGLE_MAPS_API_KEY 로 주입.
-const GOOGLE_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-const hasGoogle = !!GOOGLE_KEY
-// 구글 지도 지명을 한국어로 표시
-const googleConf = { apiKey: GOOGLE_KEY ?? '', language: 'ko', region: 'KR' }
-
-// MapTiler API 키(선택). 있으면 한글 지명 벡터 지도 사용.
+// MapTiler API 키(선택). 있으면 한글/영문 지명 벡터 지도 사용.
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY
 const hasMapTiler = !!MAPTILER_KEY
-// 무료(OSM 영문)를 기본값으로 쓸지 여부 — 구글/맵타일러 키가 모두 없을 때만
-const freeDefault = !hasGoogle && !hasMapTiler
+
+type MapStyleKind = 'map' | 'satellite'
+const STYLE_ID: Record<MapStyleKind, string> = { map: 'streets-v4', satellite: 'hybrid-v4' }
 
 interface Props {
   themes: BibleMapTheme[] // 지도에 표시할 테마들(비교 모드면 여러 개)
@@ -171,7 +166,7 @@ function ThemeLayer({
             },
           }}
         >
-          <Popup>
+          <Popup maxWidth={240}>
             <b>
               {theme.kind === 'journey' ? `${idx + 1}. ` : ''}
               {loc.name}
@@ -193,73 +188,71 @@ function ThemeLayer({
   )
 }
 
+// 지도 스타일(지도/위성) · 언어(한글/영어) 전환 컨트롤
+function MapStyleSwitcher({
+  styleKind,
+  lang,
+  onStyleChange,
+  onLangChange,
+}: {
+  styleKind: MapStyleKind
+  lang: MapLang
+  onStyleChange: (s: MapStyleKind) => void
+  onLangChange: (l: MapLang) => void
+}) {
+  if (!hasMapTiler) return null
+  return (
+    <div className="map-switcher" role="group" aria-label="지도 표시 설정">
+      <div className="switcher-row">
+        <button
+          className={styleKind === 'map' ? 'on' : ''}
+          onClick={() => onStyleChange('map')}
+          aria-pressed={styleKind === 'map'}
+        >
+          🗺️ 지도
+        </button>
+        <button
+          className={styleKind === 'satellite' ? 'on' : ''}
+          onClick={() => onStyleChange('satellite')}
+          aria-pressed={styleKind === 'satellite'}
+        >
+          🛰️ 위성
+        </button>
+      </div>
+      <div className="switcher-row">
+        <button className={lang === 'ko' ? 'on' : ''} onClick={() => onLangChange('ko')} aria-pressed={lang === 'ko'}>
+          한글
+        </button>
+        <button className={lang === 'en' ? 'on' : ''} onClick={() => onLangChange('en')} aria-pressed={lang === 'en'}>
+          English
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function MapView(props: Props) {
   const { themes, activeId, onSelectLoc, onSelectTheme, playPos, selectedLocId } = props
   const active = themes.find((t) => t.id === activeId) ?? null
+  const [styleKind, setStyleKind] = useState<MapStyleKind>('map')
+  const [lang, setLang] = useState<MapLang>('ko')
 
   return (
     <div className="map-wrap">
-      <MapContainer center={[33, 33]} zoom={5} scrollWheelZoom worldCopyJump>
-        <LayersControl position="bottomright">
-          {/* 구글 지도 (API 키가 있을 때만) — 한국어 지명 */}
-          {hasGoogle && (
-            <>
-              <LayersControl.BaseLayer checked name="구글 지도 (한글)">
-                <GoogleLayer apiKey={GOOGLE_KEY!} type="roadmap" googleMapsLoaderConf={googleConf} />
-              </LayersControl.BaseLayer>
-              <LayersControl.BaseLayer name="구글 위성 (한글)">
-                <GoogleLayer apiKey={GOOGLE_KEY!} type="hybrid" googleMapsLoaderConf={googleConf} />
-              </LayersControl.BaseLayer>
-              <LayersControl.BaseLayer name="구글 지형 (한글)">
-                <GoogleLayer apiKey={GOOGLE_KEY!} type="terrain" googleMapsLoaderConf={googleConf} />
-              </LayersControl.BaseLayer>
-            </>
-          )}
+      <MapContainer center={[33, 33]} zoom={5} scrollWheelZoom worldCopyJump zoomControl={false}>
+        <ZoomControl position="bottomleft" />
 
-          {/* MapTiler 벡터 지도 (API 키가 있을 때만) — 한국어 지명 */}
-          {hasMapTiler && (
-            <>
-              <LayersControl.BaseLayer checked={!hasGoogle} name="MapTiler 지도 (한글)">
-                <Suspense fallback={null}>
-                  <MapTilerLayer apiKey={MAPTILER_KEY!} style="streets-v4" language="ko" />
-                </Suspense>
-              </LayersControl.BaseLayer>
-              <LayersControl.BaseLayer name="MapTiler 위성 (한글)">
-                <Suspense fallback={null}>
-                  <MapTilerLayer apiKey={MAPTILER_KEY!} style="hybrid-v4" language="ko" />
-                </Suspense>
-              </LayersControl.BaseLayer>
-            </>
-          )}
-
-          {/* 무료 지도 — 지명 영어 (Wikimedia osm-intl), 다른 키 없으면 기본값 */}
-          <LayersControl.BaseLayer checked={freeDefault} name="일반 지도 (영문)">
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>'
-              url="https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
-              maxZoom={18}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="일반 지도 (현지어)">
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="지형 지도 (OpenTopo)">
-            <TileLayer
-              attribution='&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
-              url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-              maxZoom={17}
-            />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="위성 사진 (Esri)">
-            <TileLayer
-              attribution="Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics"
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            />
-          </LayersControl.BaseLayer>
-        </LayersControl>
+        {hasMapTiler ? (
+          <Suspense fallback={null}>
+            <MapTilerLayer apiKey={MAPTILER_KEY!} style={STYLE_ID[styleKind]} lang={lang} />
+          </Suspense>
+        ) : (
+          // 안전망: 키가 설정되지 않은 개발 환경에서 지도가 완전히 빈 화면이 되지 않도록 함
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        )}
 
         {themes.map((theme) => (
           <ThemeLayer
@@ -274,6 +267,12 @@ export default function MapView(props: Props) {
 
         <MapController themes={themes} activeId={activeId} selectedLocId={selectedLocId} playPos={playPos} />
       </MapContainer>
+
+      <MapStyleSwitcher styleKind={styleKind} lang={lang} onStyleChange={setStyleKind} onLangChange={setLang} />
+
+      {!hasMapTiler && (
+        <div className="key-missing-badge">MapTiler API 키가 설정되지 않아 기본 지도로 표시됩니다.</div>
+      )}
 
       {active && (
         <div className="legend">
@@ -296,7 +295,7 @@ export default function MapView(props: Props) {
       {themes.length === 0 && (
         <div className="empty-hint">
           <div className="box">
-            왼쪽에서 성경 지도 테마를 선택하세요.
+            왼쪽 메뉴에서 성경 지도 테마를 선택하세요.
             <br />
             여러 개를 함께 켜서 비교할 수도 있습니다.
           </div>

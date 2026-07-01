@@ -11,6 +11,7 @@ export default function App() {
   const [selectedLocId, setSelectedLocId] = useState<string | null>(null)
   const [playPos, setPlayPos] = useState<number | null>(null)
   const [verseRef, setVerseRef] = useState<string | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false) // 모바일 사이드바 드로어
   const rafRef = useRef<number | null>(null)
   const lastTsRef = useRef<number>(0)
 
@@ -29,6 +30,7 @@ export default function App() {
     setSelectedIds([id])
     setActiveId(id)
     setSelectedLocId(null)
+    setMenuOpen(false) // 모바일: 테마를 고르면 지도가 바로 보이도록 드로어를 닫음
   }
 
   // 비교 목록 토글
@@ -87,9 +89,30 @@ export default function App() {
 
   useEffect(() => () => stopPlay(), [stopPlay])
 
+  // 드로어가 열려 있을 때 ESC 로 닫기
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [menuOpen])
+
   return (
     <div className="app">
-      <aside className="sidebar">
+      <button
+        className="hamburger"
+        onClick={() => setMenuOpen((v) => !v)}
+        aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
+        aria-expanded={menuOpen}
+      >
+        {menuOpen ? '✕' : '☰'}
+      </button>
+
+      <div className={`scrim${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)} />
+
+      <aside className={`sidebar${menuOpen ? ' open' : ''}`}>
         <Sidebar
           activeId={activeId}
           selectedIds={selectedIds}

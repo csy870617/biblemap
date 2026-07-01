@@ -12,6 +12,7 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -28,10 +29,44 @@ body {
   overflow: hidden;
 }
 
+button {
+  touch-action: manipulation;
+}
+
 .app {
   display: flex;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---------- Mobile drawer controls (hidden on desktop) ---------- */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 12px;
+  z-index: 1300;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 18px;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1150;
 }
 
 /* ---------- Sidebar ---------- */
@@ -295,7 +330,7 @@ body {
   position: absolute;
   top: 14px;
   right: 14px;
-  z-index: 500;
+  z-index: 700;
   background: rgba(15, 23, 42, 0.86);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -315,13 +350,66 @@ body {
   line-height: 1.6;
 }
 
+/* ---------- Map style/language switcher ---------- */
+.map-switcher {
+  position: absolute;
+  right: 10px;
+  bottom: 40px;
+  z-index: 700;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  backdrop-filter: blur(4px);
+}
+.switcher-row {
+  display: flex;
+  gap: 4px;
+}
+.switcher-row button {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  min-height: 36px;
+  white-space: nowrap;
+}
+.switcher-row button.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #04293a;
+  font-weight: 700;
+}
+
+.key-missing-badge {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 700;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 11px;
+  color: var(--muted);
+  max-width: 78vw;
+  text-align: center;
+}
+
 .empty-hint {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 500;
+  z-index: 600;
   pointer-events: none;
 }
 .empty-hint .box {
@@ -409,26 +497,24 @@ body {
 }
 
 /* ---------- Leaflet controls (dark) ---------- */
-.leaflet-control-layers {
-  background: var(--panel) !important;
-  color: var(--text);
-  border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-}
-.leaflet-control-layers-expanded {
-  padding: 8px 10px !important;
-}
-.leaflet-control-layers label {
-  color: var(--text);
-  font-size: 13px;
-}
 .leaflet-bar a {
   background: var(--panel);
   color: var(--text);
   border-color: var(--border);
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
 }
 .leaflet-bar a:hover {
   background: var(--panel-2);
+}
+.leaflet-control-attribution {
+  font-size: 9.5px;
+  background: rgba(15, 23, 42, 0.7) !important;
+  color: var(--muted) !important;
+}
+.leaflet-control-attribution a {
+  color: var(--text) !important;
 }
 
 /* ---------- Timeline ---------- */
@@ -521,6 +607,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);
 }
@@ -532,6 +620,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin-left: auto;
 }
 .lang-toggle {
   display: flex;
@@ -604,16 +693,105 @@ button.ref-chip:hover {
   border-color: var(--accent);
 }
 
-@media (max-width: 720px) {
-  .app {
-    flex-direction: column;
+/* =====================================================================
+   모바일: 지도를 전체 화면으로 두고, 사이드바는 슬라이드인 드로어로 전환
+   ===================================================================== */
+@media (max-width: 860px) {
+  .hamburger {
+    display: flex;
   }
-  .sidebar {
-    width: 100%;
-    min-width: 0;
-    height: 46%;
+  .scrim.open {
+    display: block;
   }
+
   .main {
-    height: 54%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: min(86vw, 360px);
+    min-width: 0;
+    height: 100%;
+    height: 100dvh;
+    z-index: 1200;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.45);
+    transform: translateX(-100%);
+    transition: transform 0.22s ease-out;
+    padding-top: env(safe-area-inset-top);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* 닫기(✕) 버튼이 브랜드 제목과 겹치지 않도록 여백 확보 */
+  .sidebar .brand {
+    padding-left: 64px;
+  }
+
+  .theme-list,
+  .loc-list {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* 좁은 화면에서 탭 영역을 넉넉하게 */
+  .compare-btn {
+    flex-basis: 34px;
+    width: 34px;
+    height: 34px;
+  }
+  .theme-card {
+    padding: 13px 16px 13px 14px;
+  }
+
+  .legend {
+    max-width: 46vw;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .legend .lg-title {
+    font-size: 12px;
+  }
+
+  .map-switcher {
+    bottom: 36px;
+    right: 8px;
+  }
+  .switcher-row button {
+    padding: 6px 8px;
+    font-size: 11px;
+    min-height: 34px;
+  }
+
+  .timeline {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(78px + env(safe-area-inset-bottom));
+    flex-basis: calc(78px + env(safe-area-inset-bottom));
+  }
+
+  .verse-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+  .verse-panel {
+    width: 100%;
+    max-height: 88vh;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (max-width: 420px) {
+  .legend {
+    max-width: 40vw;
+  }
+  .tl-tick span {
+    font-size: 9px;
+  }
+  .verse-ref {
+    font-size: 14.5px;
   }
 }

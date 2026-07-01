@@ -11,12 +11,12 @@
 - **여러 지도 비교** — `＋` 버튼으로 여러 여정을 지도 위에 색깔별로 동시에 표시 (예: 바울 1·2·3차)
 - **성경 본문 연동** — 구절 칩을 누르면 실제 본문을 팝업으로 표시 (한국어/영어 전환, [getbible.net](https://getbible.net) API)
 - **연대표(타임라인)** — BC 2000 ~ AD 100 시대순으로 지도를 배치, 클릭해 이동
-- **베이스맵 전환** — 우하단 레이어 버튼으로 배경 지도 선택
-  - 무료(키 불필요): **영문 지명**(Wikimedia) · **현지어**(OSM) · 지형(OpenTopo) · 위성(Esri)
-  - **MapTiler**(한글 지명, 벡터): 무료 키로 사용 가능 (아래 참고)
-  - **구글 지도**(한글 지명): API 키를 넣으면 도로/위성/지형 사용 가능 (아래 참고)
+- **베이스맵 전환** — 지도 우하단 스위처로 전환
+  - **지도 / 위성** 스타일 × **한글 / English** 지명, 총 4가지 조합 (MapTiler 벡터 지도, 아래 참고)
 - **검색** — 지명·성경 구절·테마로 빠르게 찾기 (예: `에베소`, `출애굽`, `사도행전 27`)
 - **현대 지명 병기** — 옛 지명과 오늘날 위치를 함께 표시
+- **모바일 대응** — 좁은 화면에서는 지도가 전체 화면을 채우고, 테마 목록은 좌측에서
+  슬라이드로 여닫는 드로어(햄버거 메뉴)로 전환되어 화면 요소가 겹치지 않습니다.
 
 ## 🌐 온라인 배포 (GitHub Pages)
 
@@ -33,24 +33,21 @@ GitHub Pages에 배포합니다.
 > 권한이 허용된 경우 위 설정 없이도 첫 배포 시 활성화될 수 있습니다.
 > 배포 진행 상황은 저장소 **Actions** 탭에서 볼 수 있습니다.
 
-**배포본에서 한글 지도(MapTiler/구글)를 쓰려면**, 키를 저장소 시크릿으로 등록해야 합니다
+**배포본에서 지도(MapTiler)를 쓰려면**, 키를 저장소 시크릿으로 등록해야 합니다
 (빌드 로그·소스코드 어디에도 값이 노출되지 않습니다):
 
 1. GitHub 저장소 → **Settings → Secrets and variables → Actions → New repository secret**
 2. Name: `VITE_MAPTILER_KEY` / Secret: 발급받은 MapTiler 키 → **Add secret**
-3. (선택) 구글 지도도 쓰려면 같은 방식으로 `VITE_GOOGLE_MAPS_API_KEY` 도 추가
-4. 이후 아무 커밋이나 푸시하면(또는 Actions 탭에서 Re-run) 배포본에 한글 지도가 반영됩니다
+3. 이후 아무 커밋이나 푸시하면(또는 Actions 탭에서 Re-run) 배포본에 지도가 반영됩니다
 
-워크플로우(`deploy.yml`)는 이미 두 시크릿을 빌드 시점에 주입하도록 설정되어 있어,
-등록만 하면 별도 코드 수정 없이 바로 적용됩니다. 시크릿을 등록하지 않으면 지금처럼
-무료 영문 지도로 정상 동작합니다.
+워크플로우(`deploy.yml`)는 이미 이 시크릿을 빌드 시점에 주입하도록 설정되어 있어,
+등록만 하면 별도 코드 수정 없이 바로 적용됩니다. 시크릿을 등록하지 않으면 기본
+무료 지도(OpenStreetMap)로 동작합니다.
 
-## 🗺️ 배경 지도 (구글 지도 · 언어)
+## 🗺️ 배경 지도 (MapTiler)
 
-기본 배경은 **영문 지명 무료 지도**입니다(별도 설정 불필요). 성경 땅의 지명이 히브리어·아랍어가
-아닌 영어로 표시됩니다. "현지어" 레이어를 고르면 원어 지명으로 볼 수 있습니다.
-
-**한글 지명 지도(MapTiler, 무료 권장)** — 결제 없이 쓸 수 있는 방법입니다:
+배경 지도는 **MapTiler 벡터 지도** 하나이며, 지도 위 스위처에서 **지도/위성** 스타일과
+**한글/English** 지명을 자유롭게 조합해 볼 수 있습니다.
 
 ```bash
 cp .env.example .env
@@ -61,18 +58,8 @@ cp .env.example .env
 월 타일 요청 10만 회이며, 초과하면 다음 달까지 자동 정지되어 **요금이 청구되지 않습니다.**
 (벡터 지도라 무거워서, 키가 있을 때만 해당 코드가 지연 로딩됩니다.)
 
-**구글 지도(한글 지명)를 배경으로 쓰려면** Google Maps Platform API 키가 필요합니다
-(결제 계정 연결 필수, 매월 무료 크레딧 제공):
-
-```bash
-# .env 에 VITE_GOOGLE_MAPS_API_KEY=발급받은키 입력 후 재실행
-```
-
-키 발급: [Google Cloud Console](https://console.cloud.google.com/) → **Maps JavaScript API**
-사용 설정 → API 키 생성 → (권장) HTTP 리퍼러 제한 설정. 키가 있으면 구글 지도가 배경 기본값이
-되고 지명이 한국어로 나옵니다. 키가 없으면 무료 지도로 자동 동작합니다.
-
-> 배포(GitHub Pages)에서 구글 지도를 쓰려면 위 "온라인 배포" 절의 저장소 시크릿 설정을 따르세요.
+키가 없으면 기본 무료 지도(OpenStreetMap, 스타일/언어 전환 불가)로 자동 동작하며, 화면에
+"MapTiler API 키가 설정되지 않아 기본 지도로 표시됩니다" 배지가 표시됩니다.
 
 ## 🚀 로컬 실행
 
@@ -86,9 +73,8 @@ npm run preview  # 빌드 결과 미리보기
 ## 🧱 기술 스택
 
 - Vite + React + TypeScript
-- Leaflet + OpenStreetMap(영문/현지어) / OpenTopoMap / Esri (무료, 키 불필요)
-- 선택: MapTiler 벡터 지도(한글, 무료 키) · 구글 지도(한글, 유료 키)
-- 배경 우선순위: 구글 키 > MapTiler 키 > 무료 영문 지도
+- Leaflet + MapTiler 벡터 지도(지도/위성 × 한글/영문, `@maptiler/leaflet-maptilersdk`)
+- 키 미설정 시 안전망: OpenStreetMap 무료 타일
 - 성경 본문: getbible.net v2 (런타임 조회, 실패 시 BibleGateway 링크로 대체)
 
 ## 🗂️ 구조
@@ -100,10 +86,11 @@ src/
     bible.ts            # 성경 책 매핑 · 구절 파서 · 본문 API
   components/
     Sidebar.tsx         # 테마 목록 + 검색 + 비교 토글
-    MapView.tsx         # 지도, 마커, 경로, 애니메이션, 베이스맵
+    MapView.tsx         # 지도, 마커, 경로, 애니메이션, 배경 스위처
+    MapTilerLayer.tsx   # MapTiler 벡터 레이어(react-leaflet 래퍼)
     Timeline.tsx        # 연대표
     VersePanel.tsx      # 성경 본문 팝업
-  App.tsx               # 상태 관리 (선택·비교·재생·본문)
+  App.tsx               # 상태 관리 (선택·비교·재생·본문·모바일 드로어)
 .github/workflows/deploy.yml   # GitHub Pages 자동 배포
 ```
 
