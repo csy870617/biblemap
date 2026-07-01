@@ -10,7 +10,9 @@ interface Props {
 // 연표 범위: BC 2100 ~ AD 100
 const MIN = -2100
 const MAX = 100
-const TICKS = [-2000, -1500, -1000, -500, 0, 100]
+// 500년 간격으로 고르게 배치. MAX(100)는 축 범위 계산에만 쓰고 눈금은 찍지 않습니다.
+// (0과 100은 겨우 100년 차이라 좁은 화면에서 라벨끼리 겹쳐 보였습니다.)
+const TICKS = [-2000, -1500, -1000, -500, 0]
 
 // 이보다 가까운 연도의 테마는 한 화면에서 겹쳐 보이므로 하나의 묶음으로 합칩니다.
 const CLUSTER_YEARS = 80
@@ -87,7 +89,9 @@ export default function Timeline({ activeId, selectedIds, onSelect }: Props) {
 
         {/* 테마 마커. 단일/묶음 모두 먼저 눌러서 주제를 확인한 뒤 골라 선택합니다. */}
         {CLUSTERS.map((cluster, i) => {
-          const bottom = i % 2 === 0 ? '22px' : '2px'
+          // 두 줄로 번갈아 배치해 인접한 마커끼리 겹치지 않게 하되, 위로는 "연대표" 라벨과,
+          // 아래로는 연도 눈금 숫자와 겹치지 않도록 충분한 여백을 둡니다.
+          const bottom = i % 2 === 0 ? '44px' : '22px'
           const left = `${pct(cluster.year)}%`
           const isSolo = cluster.themes.length === 1
           const hasActive = cluster.themes.some((t) => t.id === activeId)

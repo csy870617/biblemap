@@ -669,11 +669,11 @@ button {
 
 /* ---------- Timeline ---------- */
 .timeline {
-  height: 78px;
+  height: 96px;
   background: var(--panel);
   border-top: 1px solid var(--border);
   position: relative;
-  flex: 0 0 78px;
+  flex: 0 0 96px;
 }
 .timeline-label {
   position: absolute;
@@ -694,13 +694,13 @@ button {
 .tl-tick {
   position: absolute;
   bottom: 0;
-  top: 22px;
+  top: 18px;
   transform: translateX(-50%);
   border-left: 1px dashed var(--border);
 }
 .tl-tick span {
   position: absolute;
-  bottom: 3px;
+  bottom: 4px;
   left: 4px;
   font-size: 10px;
   color: var(--muted);
@@ -1007,8 +1007,8 @@ button.ref-chip:hover {
 
   .timeline {
     padding-bottom: env(safe-area-inset-bottom);
-    height: calc(78px + env(safe-area-inset-bottom));
-    flex-basis: calc(78px + env(safe-area-inset-bottom));
+    height: calc(96px + env(safe-area-inset-bottom));
+    flex-basis: calc(96px + env(safe-area-inset-bottom));
   }
 
   .verse-overlay {
