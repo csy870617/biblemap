@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { BibleMapTheme } from '../data/maps'
-import { THEMES } from '../data/maps'
+import { THEMES, KEY_PLACES } from '../data/maps'
 
 interface Props {
   activeId: string | null
@@ -9,22 +9,28 @@ interface Props {
   onToggleCompare: (id: string) => void // 비교 목록 토글
 }
 
+type SectionKey = 'OT' | 'NT' | 'KEY'
+
+function matches(t: BibleMapTheme, q: string) {
+  if (!q) return true
+  const hay = [t.title, t.subtitle, t.book, t.summary, ...t.locations.flatMap((l) => [l.name, l.nameEn, l.modern ?? '', ...l.refs])]
+    .join(' ')
+    .toLowerCase()
+  return hay.includes(q)
+}
+
 export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCompare }: Props) {
   const [query, setQuery] = useState('')
+  const [open, setOpen] = useState<Record<SectionKey, boolean>>({ OT: true, NT: true, KEY: false })
+  const toggleSection = (s: SectionKey) => setOpen((prev) => ({ ...prev, [s]: !prev[s] }))
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return THEMES
-    return THEMES.filter((t) => {
-      const hay = [t.title, t.subtitle, t.book, t.summary, ...t.locations.flatMap((l) => [l.name, l.nameEn, l.modern ?? '', ...l.refs])]
-        .join(' ')
-        .toLowerCase()
-      return hay.includes(q)
-    })
-  }, [query])
-
-  const ot = filtered.filter((t) => t.testament === 'OT')
-  const nt = filtered.filter((t) => t.testament === 'NT')
+  const q = query.trim().toLowerCase()
+  const ot = useMemo(() => THEMES.filter((t) => t.testament === 'OT').filter((t) => matches(t, q)), [q])
+  const nt = useMemo(() => THEMES.filter((t) => t.testament === 'NT').filter((t) => matches(t, q)), [q])
+  const keyPlaces = useMemo(() => KEY_PLACES.filter((t) => matches(t, q)), [q])
+  const filtered = [...ot, ...nt, ...keyPlaces]
+  // 검색 중에는 결과가 접힌 섹션에 숨어 보이지 않는 일이 없도록 모든 섹션을 강제로 펼침
+  const isOpen = (s: SectionKey) => (q ? true : open[s])
 
   const card = (t: BibleMapTheme) => {
     const isActive = t.id === activeId
@@ -78,10 +84,37 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
 
       <div className="theme-list">
         <div className="compare-hint">중복선택</div>
-        {ot.length > 0 && <div className="section-label">구약 OLD TESTAMENT</div>}
-        {ot.map(card)}
-        {nt.length > 0 && <div className="section-label">신약 NEW TESTAMENT</div>}
-        {nt.map(card)}
+
+        {ot.length > 0 && (
+          <>
+            <button className="section-toggle" onClick={() => toggleSection('OT')} aria-expanded={isOpen('OT')}>
+              <span>구약 OLD TESTAMENT</span>
+              <span className="chevron">{isOpen('OT') ? '▾' : '▸'}</span>
+            </button>
+            {isOpen('OT') && ot.map(card)}
+          </>
+        )}
+
+        {nt.length > 0 && (
+          <>
+            <button className="section-toggle" onClick={() => toggleSection('NT')} aria-expanded={isOpen('NT')}>
+              <span>신약 NEW TESTAMENT</span>
+              <span className="chevron">{isOpen('NT') ? '▾' : '▸'}</span>
+            </button>
+            {isOpen('NT') && nt.map(card)}
+          </>
+        )}
+
+        {keyPlaces.length > 0 && (
+          <>
+            <button className="section-toggle" onClick={() => toggleSection('KEY')} aria-expanded={isOpen('KEY')}>
+              <span>핵심지명 KEY PLACES</span>
+              <span className="chevron">{isOpen('KEY') ? '▾' : '▸'}</span>
+            </button>
+            {isOpen('KEY') && keyPlaces.map(card)}
+          </>
+        )}
+
         {filtered.length === 0 && (
           <div className="section-label" style={{ opacity: 0.7 }}>
             검색 결과가 없습니다.
