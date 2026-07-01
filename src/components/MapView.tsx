@@ -334,11 +334,7 @@ export default function MapView(props: Props) {
 
       {themes.length === 0 && (
         <div className="empty-hint">
-          <div className="box">
-            왼쪽 메뉴에서 성경 지도 테마를 선택하세요.
-            <br />
-            여러 개를 함께 켜서 비교할 수도 있습니다.
-          </div>
+          <div className="box">왼쪽 메뉴에서 성경 지도 테마를 선택하세요.</div>
         </div>
       )}
     </div>

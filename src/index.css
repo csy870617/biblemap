@@ -131,6 +131,15 @@ button {
   padding: 12px 20px 6px;
 }
 
+/* 목록 최상단, ＋ 버튼이 중복 선택(비교) 용도임을 알려주는 라벨 */
+.compare-hint {
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 20px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
 .theme-card {
   display: flex;
   gap: 12px;
