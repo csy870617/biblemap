@@ -1,4 +1,5 @@
-import { THEMES } from '../data/maps'
+import { useEffect, useRef, useState } from 'react'
+import { THEMES, type BibleMapTheme } from '../data/maps'
 
 interface Props {
   activeId: string | null
@@ -11,6 +12,9 @@ const MIN = -2100
 const MAX = 100
 const TICKS = [-2000, -1500, -1000, -500, 0, 100]
 
+// 이보다 가까운 연도의 테마는 한 화면에서 겹쳐 보이므로 하나의 묶음으로 합칩니다.
+const CLUSTER_YEARS = 80
+
 function pct(year: number) {
   return ((year - MIN) / (MAX - MIN)) * 100
 }
@@ -20,9 +24,58 @@ function yearLabel(y: number) {
   return y < 0 ? `BC ${-y}` : `AD ${y}`
 }
 
+interface Cluster {
+  id: string
+  year: number
+  themes: BibleMapTheme[]
+}
+
+// 연도순으로 정렬 후, 인접한 항목끼리 연도 차이가 임계값보다 작으면 같은 묶음으로 합칩니다.
+function buildClusters(themes: BibleMapTheme[]): Cluster[] {
+  const sorted = [...themes].sort((a, b) => a.year - b.year)
+  const clusters: Cluster[] = []
+  for (const th of sorted) {
+    const last = clusters[clusters.length - 1]
+    if (last && th.year - last.themes[last.themes.length - 1].year < CLUSTER_YEARS) {
+      last.themes.push(th)
+      last.year = last.themes.reduce((sum, t) => sum + t.year, 0) / last.themes.length
+    } else {
+      clusters.push({ id: th.id, year: th.year, themes: [th] })
+    }
+  }
+  return clusters
+}
+
+const CLUSTERS = buildClusters(THEMES)
+
 export default function Timeline({ activeId, selectedIds, onSelect }: Props) {
+  const [openCluster, setOpenCluster] = useState<string | null>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  // 바깥 클릭 / ESC 로 팝오버 닫기
+  useEffect(() => {
+    if (!openCluster) return
+    const onDocClick = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpenCluster(null)
+    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenCluster(null)
+    }
+    document.addEventListener('mousedown', onDocClick)
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDocClick)
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [openCluster])
+
+  const pick = (id: string) => {
+    setOpenCluster(null)
+    onSelect(id)
+  }
+
   return (
-    <div className="timeline">
+    <div className="timeline" ref={rootRef}>
       <div className="timeline-label">연대표</div>
       <div className="timeline-track">
         {/* 눈금 */}
@@ -31,25 +84,63 @@ export default function Timeline({ activeId, selectedIds, onSelect }: Props) {
             <span>{yearLabel(t)}</span>
           </div>
         ))}
-        {/* 테마 마커 */}
-        {THEMES.map((th, i) => {
-          const active = th.id === activeId
-          const selected = selectedIds.includes(th.id)
+
+        {/* 테마 마커(단일) / 묶음 마커(다수) */}
+        {CLUSTERS.map((cluster, i) => {
+          const bottom = i % 2 === 0 ? '22px' : '2px'
+          const left = `${pct(cluster.year)}%`
+
+          if (cluster.themes.length === 1) {
+            const th = cluster.themes[0]
+            const active = th.id === activeId
+            const selected = selectedIds.includes(th.id)
+            return (
+              <button
+                key={cluster.id}
+                className={`tl-dot${active ? ' active' : ''}${selected ? ' selected' : ''}`}
+                style={{ left, bottom, background: th.color }}
+                title={`${th.title} · ${th.era}`}
+                onClick={() => pick(th.id)}
+              >
+                <span className="tl-emoji">{th.icon}</span>
+              </button>
+            )
+          }
+
+          const hasActive = cluster.themes.some((t) => t.id === activeId)
+          const isOpen = openCluster === cluster.id
+          const clusterPct = pct(cluster.year)
+          // 화면 가장자리에 가까운 묶음은 팝오버가 잘리지 않도록 정렬 방향을 바꿈
+          const align = clusterPct > 75 ? 'align-right' : clusterPct < 25 ? 'align-left' : 'align-center'
           return (
-            <button
-              key={th.id}
-              className={`tl-dot${active ? ' active' : ''}${selected ? ' selected' : ''}`}
-              style={{
-                left: `${pct(th.year)}%`,
-                background: th.color,
-                // 라벨이 겹치지 않도록 위/아래 번갈아 배치
-                bottom: i % 2 === 0 ? '22px' : '2px',
-              }}
-              title={`${th.title} · ${th.era}`}
-              onClick={() => onSelect(th.id)}
-            >
-              <span className="tl-emoji">{th.icon}</span>
-            </button>
+            <div key={cluster.id} className="tl-cluster-wrap" style={{ left, bottom }}>
+              <button
+                className={`tl-dot tl-cluster${hasActive ? ' active' : ''}`}
+                style={{ background: cluster.themes[0].color }}
+                title={`${cluster.themes.length}개 테마 · 눌러서 선택`}
+                onClick={() => setOpenCluster(isOpen ? null : cluster.id)}
+                aria-expanded={isOpen}
+              >
+                {cluster.themes.length}
+              </button>
+              {isOpen && (
+                <div className={`tl-popover ${align}`}>
+                  {cluster.themes.map((th) => (
+                    <button
+                      key={th.id}
+                      className={`tl-popover-row${th.id === activeId ? ' active' : ''}`}
+                      onClick={() => pick(th.id)}
+                    >
+                      <span className="ic">{th.icon}</span>
+                      <span className="tx">
+                        <span className="nm">{th.title}</span>
+                        <span className="yr">{th.era}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           )
         })}
       </div>

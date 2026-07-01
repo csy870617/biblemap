@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import MapView from './components/MapView'
 import Sidebar from './components/Sidebar'
+import DetailPanel from './components/DetailPanel'
 import Timeline from './components/Timeline'
 import VersePanel from './components/VersePanel'
 import { THEMES } from './data/maps'
@@ -12,6 +13,7 @@ export default function App() {
   const [playPos, setPlayPos] = useState<number | null>(null)
   const [verseRef, setVerseRef] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false) // 모바일 사이드바 드로어
+  const [sidebarView, setSidebarView] = useState<'list' | 'detail'>('list') // 목록/상세(재생) 화면 전환
   const rafRef = useRef<number | null>(null)
   const lastTsRef = useRef<number>(0)
   const endTimeoutRef = useRef<number | null>(null)
@@ -27,14 +29,17 @@ export default function App() {
     setPlayPos(null)
   }, [])
 
-  // 단독 보기: 해당 테마만 표시하고 활성화
+  // 단독 보기: 해당 테마만 표시하고 활성화, 상세(재생) 화면으로 전환
   const openTheme = (id: string) => {
     stopPlay()
     setSelectedIds([id])
     setActiveId(id)
     setSelectedLocId(null)
+    setSidebarView('detail')
     setMenuOpen(false) // 모바일: 테마를 고르면 지도가 바로 보이도록 드로어를 닫음
   }
+
+  const backToList = () => setSidebarView('list')
 
   // 비교 목록 토글
   const toggleCompare = (id: string) => {
@@ -60,6 +65,7 @@ export default function App() {
     stopPlay()
     setActiveId(id)
     setSelectedLocId(null)
+    setSidebarView('detail')
   }
 
   const play = useCallback(() => {
@@ -119,81 +125,28 @@ export default function App() {
       <div className={`scrim${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)} />
 
       <aside className={`sidebar${menuOpen ? ' open' : ''}`}>
-        <Sidebar
-          activeId={activeId}
-          selectedIds={selectedIds}
-          onOpenTheme={openTheme}
-          onToggleCompare={toggleCompare}
-        />
-
-        {active && (
-          <div className="detail">
-            <div className="head">
-              <div className="ttl">
-                {active.icon} {active.title}
-              </div>
-              <div className="smy">{active.summary}</div>
-            </div>
-
-            <div className="player">
-              {active.kind === 'journey' &&
-                (playPos === null ? (
-                  <button className="btn primary" onClick={play}>
-                    ▶ 여정 재생
-                  </button>
-                ) : (
-                  <button className="btn" onClick={stopPlay}>
-                    ■ 정지
-                  </button>
-                ))}
-              <button
-                className="btn"
-                onClick={() => {
-                  stopPlay()
-                  setSelectedLocId(null)
-                }}
-              >
-                ⤢ 전체 보기
-              </button>
-            </div>
-
-            <div className="loc-list">
-              {active.locations.map((loc, idx) => (
-                <div
-                  key={loc.id}
-                  className={`loc-item${loc.id === selectedLocId ? ' active' : ''}`}
-                  onClick={() => selectLoc(loc.id)}
-                >
-                  <div className="num" style={{ background: active.color }}>
-                    {active.kind === 'journey' ? idx + 1 : '•'}
-                  </div>
-                  <div className="body">
-                    <div className="nm">
-                      {loc.name}
-                      {loc.modern ? <span style={{ color: 'var(--muted)', fontWeight: 400 }}> · {loc.modern}</span> : null}
-                    </div>
-                    <div className="en">{loc.nameEn}</div>
-                    <div className="refs">
-                      {loc.refs.map((r) => (
-                        <button
-                          className="ref-chip"
-                          key={r}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setVerseRef(r)
-                          }}
-                          title="본문 보기"
-                        >
-                          {r}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="ds">{loc.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {sidebarView === 'detail' && active ? (
+          <DetailPanel
+            theme={active}
+            playPos={playPos}
+            selectedLocId={selectedLocId}
+            onBack={backToList}
+            onPlay={play}
+            onStop={stopPlay}
+            onShowAll={() => {
+              stopPlay()
+              setSelectedLocId(null)
+            }}
+            onSelectLoc={selectLoc}
+            onOpenVerse={setVerseRef}
+          />
+        ) : (
+          <Sidebar
+            activeId={activeId}
+            selectedIds={selectedIds}
+            onOpenTheme={openTheme}
+            onToggleCompare={toggleCompare}
+          />
         )}
       </aside>
 

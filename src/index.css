@@ -166,16 +166,34 @@ button {
   opacity: 0.85;
 }
 
-/* ---------- Detail / locations panel ---------- */
+/* ---------- Detail / locations panel (목록과 분리된 상세·재생 화면) ---------- */
 .detail {
-  border-top: 1px solid var(--border);
   background: var(--panel);
   display: flex;
   flex-direction: column;
-  max-height: 55%;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+.detail-nav {
+  padding: 14px 18px 0;
+  flex: 0 0 auto;
+}
+.back-btn {
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.back-btn:hover {
+  border-color: var(--accent);
 }
 .detail .head {
   padding: 14px 18px 8px;
+  flex: 0 0 auto;
 }
 .detail .head .ttl {
   font-size: 16px;
@@ -192,6 +210,7 @@ button {
   gap: 8px;
   padding: 8px 18px 12px;
   align-items: center;
+  flex: 0 0 auto;
 }
 .btn {
   border: 1px solid var(--border);
@@ -218,6 +237,8 @@ button {
 .loc-list {
   overflow-y: auto;
   padding: 4px 0 14px;
+  flex: 1;
+  min-height: 0;
 }
 .loc-item {
   display: flex;
@@ -630,6 +651,93 @@ button {
   border-color: #fff;
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.6);
   z-index: 4;
+}
+
+/* ---------- Timeline cluster (겹치는 연도의 테마를 묶어서 표시) ---------- */
+.tl-cluster-wrap {
+  position: absolute;
+  transform: translateX(-50%);
+  /* transform 은 새 stacking context 를 만들어 자식 팝오버의 z-index 를
+     이 요소 밖과 비교할 때 무력화시키므로, 래퍼 자체에 지도 위 컨트롤보다
+     높은 z-index 를 지정해 팝오버가 항상 클릭 가능하도록 함 */
+  z-index: 1000;
+}
+.tl-cluster-wrap .tl-dot {
+  position: static;
+  transform: none;
+}
+.tl-cluster-wrap .tl-dot:hover {
+  transform: scale(1.15);
+}
+.tl-dot.tl-cluster {
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.tl-popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 190px;
+  max-width: min(260px, 70vw);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tl-popover.align-center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tl-popover.align-left {
+  left: 0;
+}
+.tl-popover.align-right {
+  right: 0;
+}
+.tl-popover-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  color: var(--text);
+  padding: 7px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 12.5px;
+  width: 100%;
+}
+.tl-popover-row:hover {
+  background: var(--panel-2);
+}
+.tl-popover-row.active {
+  background: var(--panel-2);
+  color: var(--accent);
+}
+.tl-popover-row .ic {
+  font-size: 16px;
+  flex: 0 0 auto;
+}
+.tl-popover-row .tx {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.tl-popover-row .nm {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tl-popover-row .yr {
+  font-size: 10.5px;
+  color: var(--muted);
 }
 
 /* ---------- Verse panel ---------- */
