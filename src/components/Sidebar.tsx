@@ -77,6 +77,7 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
       </div>
 
       <div className="theme-list">
+        <div className="compare-hint">중복선택</div>
         {ot.length > 0 && <div className="section-label">구약 OLD TESTAMENT</div>}
         {ot.map(card)}
         {nt.length > 0 && <div className="section-label">신약 NEW TESTAMENT</div>}
