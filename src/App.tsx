@@ -41,6 +41,14 @@ export default function App() {
 
   const backToList = () => setSidebarView('list')
 
+  // 핵심지명 선택: 상세 화면으로 넘어가지 않고 목록(핵심지명 펼침 상태)에 머문 채 지도에만 표시
+  const selectKeyPlace = (id: string) => {
+    stopPlay()
+    setSelectedIds([id])
+    setActiveId(id)
+    setSelectedLocId(null)
+  }
+
   // 비교 목록 토글
   const toggleCompare = (id: string) => {
     stopPlay()
@@ -146,6 +154,7 @@ export default function App() {
             activeId={activeId}
             selectedIds={selectedIds}
             onOpenTheme={openTheme}
+            onSelectKeyPlace={selectKeyPlace}
             onToggleCompare={toggleCompare}
           />
         )}
