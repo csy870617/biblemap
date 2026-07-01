@@ -6,6 +6,7 @@ interface Props {
   activeId: string | null
   selectedIds: string[]
   onOpenTheme: (id: string) => void // 단독 보기(활성화)
+  onSelectKeyPlace: (id: string) => void // 핵심지명 선택(목록에 머문 채 지도에만 표시)
   onToggleCompare: (id: string) => void // 비교 목록 토글
 }
 
@@ -28,7 +29,7 @@ function sectionOf(id: string | null): SectionKey | null {
   return theme ? theme.testament : null
 }
 
-export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCompare }: Props) {
+export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKeyPlace, onToggleCompare }: Props) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(() => {
     const initial: Record<SectionKey, boolean> = { OT: false, NT: false, KEY: false }
@@ -36,7 +37,9 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
     if (sec) initial[sec] = true
     return initial
   })
-  const toggleSection = (s: SectionKey) => setOpen((prev) => ({ ...prev, [s]: !prev[s] }))
+  // 한 번에 하나의 섹션만 펼쳐지는 아코디언: 다른 섹션을 열면 나머지는 자동으로 닫힘
+  const toggleSection = (s: SectionKey) =>
+    setOpen((prev) => (prev[s] ? { ...prev, [s]: false } : { OT: false, NT: false, KEY: false, [s]: true }))
 
   const q = query.trim().toLowerCase()
   const ot = useMemo(() => THEMES.filter((t) => t.testament === 'OT').filter((t) => matches(t, q)), [q])
@@ -46,14 +49,14 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
   // 검색 중에는 결과가 접힌 섹션에 숨어 보이지 않는 일이 없도록 모든 섹션을 강제로 펼침
   const isOpen = (s: SectionKey) => (q ? true : open[s])
 
-  const card = (t: BibleMapTheme) => {
+  const card = (t: BibleMapTheme, isKey = false) => {
     const isActive = t.id === activeId
     const isSelected = selectedIds.includes(t.id)
     return (
       <div
         key={t.id}
         className={`theme-card${isActive ? ' active' : ''}${isSelected && !isActive ? ' selected' : ''}`}
-        onClick={() => onOpenTheme(t.id)}
+        onClick={() => (isKey ? onSelectKeyPlace(t.id) : onOpenTheme(t.id))}
         style={isActive ? { borderLeftColor: t.color } : isSelected ? { borderLeftColor: t.color, opacity: 0.95 } : undefined}
       >
         <div className="icon">{t.icon}</div>
@@ -103,7 +106,7 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
               <span>구약 OLD TESTAMENT</span>
               <span className="chevron">{isOpen('OT') ? '▾' : '▸'}</span>
             </button>
-            {isOpen('OT') && ot.map(card)}
+            {isOpen('OT') && ot.map((t) => card(t))}
           </>
         )}
 
@@ -113,7 +116,7 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
               <span>신약 NEW TESTAMENT</span>
               <span className="chevron">{isOpen('NT') ? '▾' : '▸'}</span>
             </button>
-            {isOpen('NT') && nt.map(card)}
+            {isOpen('NT') && nt.map((t) => card(t))}
           </>
         )}
 
@@ -123,7 +126,7 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
               <span>핵심지명 KEY PLACES</span>
               <span className="chevron">{isOpen('KEY') ? '▾' : '▸'}</span>
             </button>
-            {isOpen('KEY') && keyPlaces.map(card)}
+            {isOpen('KEY') && keyPlaces.map((t) => card(t, true))}
           </>
         )}
 
