@@ -83,8 +83,6 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCo
       </div>
 
       <div className="theme-list">
-        <div className="compare-hint">중복선택</div>
-
         {ot.length > 0 && (
           <>
             <button className="section-toggle" onClick={() => toggleSection('OT')} aria-expanded={isOpen('OT')}>
