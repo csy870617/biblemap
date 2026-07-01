@@ -422,6 +422,56 @@ button {
   max-width: 360px;
 }
 
+/* ---------- Map loading indicator (MapTiler 청크 로드 중) ---------- */
+.map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 600;
+  pointer-events: none;
+}
+.map-loading .box {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ---------- Error boundary (전체 오류 복구 화면) ---------- */
+.error-boundary {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 3000;
+  padding: 20px;
+}
+.error-boundary .box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px;
+  text-align: center;
+  max-width: 360px;
+}
+.error-boundary .ttl {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.error-boundary p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
 .leaflet-popup-content-wrapper {
   background: var(--panel);
   color: var(--text);

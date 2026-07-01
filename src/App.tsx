@@ -14,6 +14,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false) // 모바일 사이드바 드로어
   const rafRef = useRef<number | null>(null)
   const lastTsRef = useRef<number>(0)
+  const endTimeoutRef = useRef<number | null>(null)
 
   const themes = selectedIds.map((id) => THEMES.find((t) => t.id === id)!).filter(Boolean)
   const active = THEMES.find((t) => t.id === activeId) ?? null
@@ -21,6 +22,8 @@ export default function App() {
   const stopPlay = useCallback(() => {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
     rafRef.current = null
+    if (endTimeoutRef.current !== null) window.clearTimeout(endTimeoutRef.current)
+    endTimeoutRef.current = null
     setPlayPos(null)
   }, [])
 
@@ -78,7 +81,10 @@ export default function App() {
       if (pos >= last) {
         setPlayPos(last)
         rafRef.current = null
-        window.setTimeout(() => setPlayPos(null), 900)
+        endTimeoutRef.current = window.setTimeout(() => {
+          endTimeoutRef.current = null
+          setPlayPos(null)
+        }, 900)
         return
       }
       setPlayPos(pos)

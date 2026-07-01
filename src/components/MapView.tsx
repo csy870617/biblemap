@@ -152,7 +152,7 @@ function ThemeLayer({
 
       {theme.locations.map((loc, idx) => (
         <Marker
-          key={theme.id + loc.id}
+          key={`${theme.id}:${loc.id}`}
           position={loc.coord}
           icon={
             theme.kind === 'region'
@@ -243,7 +243,7 @@ export default function MapView(props: Props) {
         <ZoomControl position="bottomleft" />
 
         {hasMapTiler ? (
-          <Suspense fallback={null}>
+          <Suspense fallback={<div className="map-loading"><div className="box">지도를 불러오는 중…</div></div>}>
             <MapTilerLayer apiKey={MAPTILER_KEY!} style={STYLE_ID[styleKind]} lang={lang} />
           </Suspense>
         ) : (
