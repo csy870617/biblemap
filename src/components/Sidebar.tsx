@@ -29,6 +29,13 @@ function sectionOf(id: string | null): SectionKey | null {
   return theme ? theme.testament : null
 }
 
+// activeId가 속한 핵심지명 소주제(book)를 찾아 반환합니다. sectionOf와 같은 이유로,
+// 초기 펼침 상태를 정할 때 씁니다.
+function bookOf(id: string | null): string | null {
+  if (!id) return null
+  return KEY_PLACES.find((t) => t.id === id)?.book ?? null
+}
+
 // 같은 book(소주제)끼리 원래 순서를 유지하며 묶습니다. 핵심지명은 book이 모든 항목에
 // 반복돼 카드마다 표시하는 대신 소주제 제목 하나로 묶어 보여주기 위해 사용합니다.
 function groupByBook(themes: BibleMapTheme[]): { book: string; items: BibleMapTheme[] }[] {
@@ -53,13 +60,21 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
   const toggleSection = (s: SectionKey) =>
     setOpen((prev) => (prev[s] ? { ...prev, [s]: false } : { OT: false, NT: false, KEY: false, [s]: true }))
 
+  // 핵심지명 안의 소주제 펼침 상태. 기본은 모두 접힘.
+  const [openSub, setOpenSub] = useState<Record<string, boolean>>(() => {
+    const book = bookOf(activeId)
+    return book ? { [book]: true } : {}
+  })
+  const toggleSub = (book: string) => setOpenSub((prev) => ({ ...prev, [book]: !prev[book] }))
+
   const q = query.trim().toLowerCase()
   const ot = useMemo(() => THEMES.filter((t) => t.testament === 'OT').filter((t) => matches(t, q)), [q])
   const nt = useMemo(() => THEMES.filter((t) => t.testament === 'NT').filter((t) => matches(t, q)), [q])
   const keyPlaces = useMemo(() => KEY_PLACES.filter((t) => matches(t, q)), [q])
   const filtered = [...ot, ...nt, ...keyPlaces]
-  // 검색 중에는 결과가 접힌 섹션에 숨어 보이지 않는 일이 없도록 모든 섹션을 강제로 펼침
+  // 검색 중에는 결과가 접힌 섹션/소주제에 숨어 보이지 않는 일이 없도록 모두 강제로 펼침
   const isOpen = (s: SectionKey) => (q ? true : open[s])
+  const isSubOpen = (book: string) => (q ? true : !!openSub[book])
 
   const card = (t: BibleMapTheme, isKey = false) => {
     const isActive = t.id === activeId
@@ -139,8 +154,11 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
             {isOpen('KEY') &&
               groupByBook(keyPlaces).map((g) => (
                 <div key={g.book}>
-                  <div className="subsection-label">{g.book}</div>
-                  {g.items.map((t) => card(t, true))}
+                  <button className="subsection-toggle" onClick={() => toggleSub(g.book)} aria-expanded={isSubOpen(g.book)}>
+                    <span>{g.book}</span>
+                    <span className="chevron">{isSubOpen(g.book) ? '▾' : '▸'}</span>
+                  </button>
+                  {isSubOpen(g.book) && g.items.map((t) => card(t, true))}
                 </div>
               ))}
           </>
