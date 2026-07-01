@@ -518,6 +518,287 @@ export const KEY_PLACES: BibleMapTheme[] = [
   },
 ]
 
-// 지도 위 마커/카드 조회용 THEMES + KEY_PLACES 통합 목록. Timeline은 THEMES만 사용해
-// 핵심지명이 연대표에 섞여 표시되지 않도록 분리합니다.
-export const ALL_THEMES: BibleMapTheme[] = [...THEMES, ...KEY_PLACES]
+// 성지순례 필수 코스 — 업로드된 순례 자료를 국가별(이스라엘/요르단/이집트/튀르키예/그리스/이탈리아)로
+// 정리했습니다. KEY_PLACES와 마찬가지로 사이드바의 별도 목록에서 국가별 소주제로 묶어 보여주며,
+// THEMES와 분리된 배열이라 연대표(Timeline)에는 나타나지 않습니다.
+const PILGRIM_COLOR = '#059669'
+const PILGRIM_ICON = '⛪'
+
+export const PILGRIMAGE: BibleMapTheme[] = [
+  {
+    id: 'pilgrim-galilee', title: '갈릴리 호수 (Sea of Galilee)', subtitle: '풍랑을 잔잔케 하신 담수호', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애 (갈릴리 사역)', year: 28, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '해수면보다 약 210m 낮고 주변이 산으로 둘러싸여 돌풍이 잦은 거대한 담수호. 예수님이 물 위를 걸으시고 풍랑을 잔잔케 하신 현장으로, 순례단이 선상 예배를 드리는 필수 코스입니다.',
+    locations: [{ id: 'pilgrim-galilee', name: '갈릴리 호수', nameEn: 'Sea of Galilee', coord: [32.8000, 35.5900], refs: [], desc: '해수면보다 약 210m 낮고 주변이 산으로 둘러싸여 돌풍이 잦은 거대한 담수호. 예수님이 물 위를 걸으시고 풍랑을 잔잔케 하신 현장으로, 순례단이 선상 예배를 드리는 필수 코스입니다.' }],
+  },
+  {
+    id: 'pilgrim-capernaum', title: '가버나움 (Capernaum)', subtitle: '갈릴리 사역의 본거지', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애 (갈릴리 사역)', year: 28, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '갈릴리 호수 북서안, 고대 국제 무역로 해변길(Via Maris)이 지나던 세관 도시로 예수님 갈릴리 사역의 본거지였습니다. 베드로 집 터와 옛 회당 유적이 남아 사역의 중심지였음을 확인할 수 있습니다.',
+    locations: [{ id: 'pilgrim-capernaum', name: '가버나움', nameEn: 'Capernaum', coord: [32.8807, 35.5750], refs: [], desc: '갈릴리 호수 북서안, 고대 국제 무역로 해변길(Via Maris)이 지나던 세관 도시로 예수님 갈릴리 사역의 본거지였습니다. 베드로 집 터와 옛 회당 유적이 남아 사역의 중심지였음을 확인할 수 있습니다.' }],
+  },
+  {
+    id: 'pilgrim-beatitudes-tabgha', title: '팔복교회 & 오병이어교회 (Mount of Beatitudes & Tabgha)', subtitle: '산상수훈과 오병이어 기적의 현장', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애 (갈릴리 사역)', year: 28, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '갈릴리 호수가 내려다보이는 완만한 산기슭과 연안. 산상수훈과 오병이어 기적의 현장으로, 팔복산은 소리가 위로 잘 울리는 천연 야외극장 지형입니다.',
+    locations: [
+      { id: 'pilgrim-beatitudes', name: '팔복교회', nameEn: 'Mount of Beatitudes', coord: [32.8792, 35.5544], refs: [], desc: '산상수훈이 선포된 곳. 소리가 위로 잘 울리는 천연 야외극장 지형입니다.' },
+      { id: 'pilgrim-tabgha', name: '오병이어교회', nameEn: 'Tabgha', coord: [32.8707, 35.5486], refs: [], desc: '보리떡 다섯 개와 물고기 두 마리로 오천 명을 먹이신 기적의 현장.' },
+    ],
+  },
+  {
+    id: 'pilgrim-nazareth', title: '나사렛 수태고지 교회 (Nazareth)', subtitle: '예수님의 고향, 변두리 지형', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: -4, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '갈릴리 남부 산지에 둘러싸인 고립된 분지 마을로 마리아가 수태고지를 들은 곳이자 예수님의 고향입니다. 중심지와 단절된 변두리 지형에서 "나사렛에서 무슨 선한 것이 나겠느냐"던 당시 인식이 이해됩니다.',
+    locations: [{ id: 'pilgrim-nazareth', name: '나사렛', nameEn: 'Nazareth', coord: [32.7019, 35.2978], refs: [], desc: '갈릴리 남부 산지에 둘러싸인 고립된 분지 마을로 마리아가 수태고지를 들은 곳이자 예수님의 고향입니다.' }],
+  },
+  {
+    id: 'pilgrim-cana', title: '가나의 혼인잔치 교회 (Cana)', subtitle: '첫 번째 이적, 물로 포도주를', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 27, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '나사렛에서 북동쪽으로 약 7km 떨어진 마을로, 예수님의 첫 이적인 물로 포도주를 만드신 혼인잔치가 열린 곳입니다. 순례단 부부들이 혼인 서약 갱신식을 갖는 코스로도 잘 알려져 있습니다.',
+    locations: [{ id: 'pilgrim-cana', name: '가나', nameEn: 'Cana', coord: [32.7456, 35.3392], refs: [], desc: '예수님의 첫 이적인 물로 포도주를 만드신 혼인잔치가 열린 곳.' }],
+  },
+  {
+    id: 'pilgrim-via-dolorosa', title: '비아 돌로로사 (Via Dolorosa / 십자가의 길)', subtitle: '예루살렘 구시가지, 고난의 14처소', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 30, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '안토니아 요새에서 골고다 언덕(성묘교회)까지 이어지는 예루살렘 구시가지의 약 1km 경사길. 예수님이 십자가를 지고 가신 14처소를 복음서를 따라 직접 걸으며 고난을 묵상합니다.',
+    locations: [{ id: 'pilgrim-via-dolorosa', name: '비아 돌로로사', nameEn: 'Via Dolorosa', coord: [31.7794, 35.2308], refs: [], desc: '예수님이 십자가를 지고 가신 고난의 14처소.' }],
+  },
+  {
+    id: 'pilgrim-holy-sepulchre', title: '무덤교회 / 성묘교회 (Church of the Holy Sepulchre)', subtitle: '골고다와 부활의 돌무덤', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 30, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '비아 돌로로사의 종착지로, 예수님이 못 박히신 골고다 언덕과 장사되신 돌무덤이 한 건물 안에 보존된 기독교 최고의 성지입니다.',
+    locations: [{ id: 'pilgrim-holy-sepulchre', name: '성묘교회', nameEn: 'Church of the Holy Sepulchre', coord: [31.7784, 35.2296], refs: [], desc: '골고다 언덕과 부활의 돌무덤이 함께 보존된 기독교 최고의 성지.' }],
+  },
+  {
+    id: 'pilgrim-olivet-gethsemane', title: '감람산과 겟세마네 (Mount of Olives & Gethsemane)', subtitle: '마지막 밤의 기도', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 30, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '예루살렘 성 동쪽 기드론 골짜기 건너편, 성전산을 정면으로 마주보는 해발 800m의 산. 예수님이 성을 보며 우신 눈물교회와 핏방울 같은 땀을 흘리며 기도하신 겟세마네 동산이 있어 마지막 밤의 긴장감이 느껴집니다.',
+    locations: [
+      { id: 'pilgrim-olivet', name: '감람산', nameEn: 'Mount of Olives', coord: [31.7823, 35.2411], refs: [], desc: '예수님이 예루살렘 성을 보며 우신 눈물교회가 있는 산.' },
+      { id: 'pilgrim-gethsemane', name: '겟세마네', nameEn: 'Gethsemane', coord: [31.7791, 35.2389], refs: [], desc: '체포되시기 전 핏방울 같은 땀을 흘리며 기도하신 동산.' },
+    ],
+  },
+  {
+    id: 'pilgrim-gallicantu', title: '베드로 통곡교회 (St. Peter in Gallicantu)', subtitle: '가야바 법정 터, 통곡의 자리', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 30, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '예루살렘 시온산 남쪽 경사지, 대제사장 가야바의 저택 터. 베드로가 닭 울기 전 예수님을 세 번 부인하고 통곡한 곳으로, 깊은 지하 감옥과 고대 돌계단이 남아 있습니다.',
+    locations: [{ id: 'pilgrim-gallicantu', name: '베드로 통곡교회', nameEn: 'St. Peter in Gallicantu', coord: [31.7735, 35.2296], refs: [], desc: '베드로가 예수님을 세 번 부인하고 통곡한 가야바 법정 터.' }],
+  },
+  {
+    id: 'pilgrim-western-wall', title: '통곡의 벽 (Western Wall)', subtitle: '성전산 서쪽 외벽', testament: 'OT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '제2성전 시대', year: -20, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '솔로몬·헤롯 성전이 있던 성전산 서쪽 외벽 일부. 성전의 역사적 실체를 확인하며 세계 평화와 유대인의 회복을 위해 벽에 손을 얹고 기도하는 장소입니다.',
+    locations: [{ id: 'pilgrim-western-wall', name: '통곡의 벽', nameEn: 'Western Wall', coord: [31.7767, 35.2345], refs: [], desc: '성전산 서쪽 외벽으로, 벽에 손을 얹고 기도하는 장소.' }],
+  },
+  {
+    id: 'pilgrim-cenacle', title: '마가 다락방 (Cenacle / 시온산)', subtitle: '최후의 만찬, 성령 강림의 자리', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '초대교회 시대', year: 30, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '예루살렘 성벽 밖 남서쪽 시온산의 고대 2층 건물 공간. 최후의 만찬 장소이자 오순절 성령 강림이 일어난 초대 교회의 발상지로, 한국 성도들이 통성으로 기도하는 곳입니다.',
+    locations: [{ id: 'pilgrim-cenacle', name: '마가 다락방', nameEn: 'Cenacle', coord: [31.7717, 35.2286], refs: [], desc: '최후의 만찬 장소이자 오순절 성령 강림이 일어난 초대 교회의 발상지.' }],
+  },
+  {
+    id: 'pilgrim-city-of-david', title: '다윗성, 히스기야 터널 및 실로암 (City of David & Siloam)', subtitle: '히스기야의 지하 수로', testament: 'OT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '왕국 시대', year: -700, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '기혼샘에서 실로암까지 이어지는 530m 길이의 지하 암반 수로. 앗수르 포위에 대비한 히스기야 왕의 수로로, 플래시를 들고 냉수를 헤치며 통과해 실로암에 도달하는 역동적인 역사 체험 코스입니다.',
+    locations: [
+      { id: 'pilgrim-city-of-david', name: '다윗성', nameEn: 'City of David', coord: [31.7735, 35.2354], refs: [], desc: '다윗이 정복해 수도로 삼은 예루살렘의 옛 터.' },
+      { id: 'pilgrim-siloam', name: '실로암', nameEn: 'Pool of Siloam', coord: [31.7717, 35.2342], refs: [], desc: '히스기야 터널의 종점, 날 때부터 소경 된 자가 눈을 뜬 곳.' },
+    ],
+  },
+  {
+    id: 'pilgrim-bethlehem', title: '베들레헴 예수 탄생 기념교회 (Church of the Nativity)', subtitle: '말구유 동굴 위의 교회', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: -4, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '예루살렘 남쪽 약 8km 유다 산지 도시. 예수님이 탄생하신 말구유 동굴 위에 세워진 교회로, 분단된 현실 속에서 평화의 왕을 묵상하게 합니다.',
+    locations: [{ id: 'pilgrim-bethlehem', name: '베들레헴', nameEn: 'Bethlehem', coord: [31.7043, 35.2038], refs: [], desc: '예수님이 탄생하신 말구유 동굴 위에 세워진 교회.' }],
+  },
+  {
+    id: 'pilgrim-beth-shemesh', title: '벧세메스 (Beth Shemesh)', subtitle: '언약궤가 돌아온 접경지', testament: 'OT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '사사 시대', year: -1050, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '유다 산지와 블레셋 평야 사이 셰펠라(낮은 구릉지)의 핵심 골짜기. 블레셋에 빼앗겼던 언약궤가 암소 수레에 실려 돌아온 곳이자 삼손의 고향으로, 접경지의 긴장감이 느껴집니다.',
+    locations: [{ id: 'pilgrim-beth-shemesh', name: '벧세메스', nameEn: 'Beth Shemesh', coord: [31.7631, 34.9814], refs: [], desc: '블레셋에 빼앗겼던 언약궤가 돌아온 곳이자 삼손의 고향.' }],
+  },
+  {
+    id: 'pilgrim-jericho-temptation', title: '여리고와 시험산 (Jericho & Mount of Temptation)', subtitle: '40일 금식 시험의 광야', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 28, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '해수면보다 250m 아래 오아시스 도시와 그 뒤편 가파른 유대 광야 절벽산. 예수님이 40일간 시험받으신 척박한 광야, 삭개오의 돌무화과나무, 엘리사의 샘을 함께 돌아봅니다.',
+    locations: [
+      { id: 'pilgrim-jericho', name: '여리고', nameEn: 'Jericho', coord: [31.8607, 35.4444], refs: [], desc: '삭개오의 돌무화과나무와 엘리사의 샘이 있는 오아시스 도시.' },
+      { id: 'pilgrim-temptation', name: '시험산', nameEn: 'Mount of Temptation', coord: [31.8706, 35.4363], refs: [], desc: '예수님이 40일간 마귀에게 시험받으신 척박한 절벽산.' },
+    ],
+  },
+  {
+    id: 'pilgrim-qumran', title: '쿰란 (Qumran)', subtitle: '사해 사본이 발견된 곳', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '제2성전 시대', year: -100, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '사해 서북쪽 해안의 삭막한 절벽과 흙 구릉 지대. 사해 사본이 발견된 동굴들이 있는 곳으로, 세속과 단절되어 성경을 필사하며 메시아를 기다린 에센파 공동체의 흔적을 확인합니다.',
+    locations: [{ id: 'pilgrim-qumran', name: '쿰란', nameEn: 'Qumran', coord: [31.7415, 35.4592], refs: [], desc: '사해 사본이 발견된 동굴들이 있는 에센파 공동체의 흔적.' }],
+  },
+  {
+    id: 'pilgrim-tel-dan', title: '텔 단 (Tel Dan)', subtitle: '금송아지 우상숭배의 현장', testament: 'OT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '분열왕국 시대', year: -930, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '이스라엘 최북단, 헐몬산 용천수가 솟구치는 요단강의 주 수원지. 북이스라엘 여로보암 1세가 금송아지 신단을 쌓은 우상숭배의 현장이자 가나안 시대 성문 유적이 보존되어 있습니다.',
+    locations: [{ id: 'pilgrim-tel-dan', name: '텔 단', nameEn: 'Tel Dan', coord: [33.2486, 35.6528], refs: [], desc: '여로보암 1세가 금송아지 신단을 쌓은 우상숭배의 현장.' }],
+  },
+  {
+    id: 'pilgrim-caesarea', title: '가이사랴 (Caesarea Maritima)', subtitle: '세계 선교의 바닷길 관문', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '초대교회 시대', year: 44, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '헤롯 대왕이 건설한 로마식 인공 항구 도시이자 로마 총독부 소재지. 고넬료가 성령을 받은 곳이자 바울이 로마 황제에게 상소해 죄수의 몸으로 배를 탄 세계 선교의 바닷길 관문입니다.',
+    locations: [{ id: 'pilgrim-caesarea', name: '가이사랴', nameEn: 'Caesarea Maritima', coord: [32.5000, 34.8900], refs: [], desc: '고넬료가 성령을 받고 바울이 로마로 압송된 바닷길 관문.' }],
+  },
+  {
+    id: 'pilgrim-joppa', title: '욥바 (Joppa / 현 텔아비브 야포)', subtitle: '요나와 베드로의 항구', testament: 'NT', kind: 'region',
+    book: '1. 이스라엘 (Israel)', era: '초대교회 시대', year: 38, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '예루살렘에서 가장 가까운 고대 천연 항구 도시. 솔로몬 성전 건축용 백향목을 받은 곳이자 요나가 다시스로 도망치려 배를 탔고, 베드로가 고넬료에게 가기로 결단한 피장 시몬의 집이 있던 곳입니다.',
+    locations: [{ id: 'pilgrim-joppa', name: '욥바', nameEn: 'Joppa', modern: '텔아비브 야포', coord: [32.0534, 34.7522], refs: [], desc: '요나가 배를 탄 곳이자 베드로가 고넬료에게 가기로 결단한 곳.' }],
+  },
+  {
+    id: 'pilgrim-nebo', title: '느보산 모세 기념교회 (Mount Nebo)', subtitle: '약속의 땅을 바라본 최종 기착지', testament: 'OT', kind: 'region',
+    book: '2. 요르단 (Jordan)', era: '광야 시대 말기', year: -1401, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '사해 동북쪽 해발 800m 산으로 가나안 땅과 요단 계곡이 한눈에 펼쳐지는 천혜의 전망대입니다. 모세가 약속의 땅을 바라보기만 하고 숨을 거둔 출애굽 여정의 최종 기착지입니다.',
+    locations: [{ id: 'pilgrim-nebo', name: '느보산', nameEn: 'Mount Nebo', coord: [31.7681, 35.7256], refs: [], desc: '모세가 약속의 땅을 바라보고 숨을 거둔 출애굽 여정의 최종 기착지.' }],
+  },
+  {
+    id: 'pilgrim-petra', title: '페트라 (Petra / 성경의 "셀라")', subtitle: '시크길 너머의 사암 바위 도시', testament: 'OT', kind: 'region',
+    book: '2. 요르단 (Jordan)', era: '에돔 시대 · 나바테아 시대', year: -100, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '요르단 남부 산악지대의 거대한 사암 바위 도시로, 좁은 절벽 틈새(시크길)를 지나야 들어갈 수 있는 천혜의 요새입니다. 구약 에돔 족속의 영토로, 출애굽 당시 이 험준한 땅을 통과하지 못해 우회해야 했던 광야의 고단함을 체감하게 합니다.',
+    locations: [{ id: 'pilgrim-petra', name: '페트라', nameEn: 'Petra', coord: [30.3285, 35.4444], refs: [], desc: '구약 에돔 족속의 영토였던 거대한 사암 바위 도시.' }],
+  },
+  {
+    id: 'pilgrim-wadi-rum', title: '와디 룸 (Wadi Rum)', subtitle: '광야 여정의 원형', testament: 'OT', kind: 'region',
+    book: '2. 요르단 (Jordan)', era: '광야 시대', year: -1440, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '붉은 모래사막 위에 거대한 사암·화강암 바위산들이 솟은 황량한 광야. 출애굽 경로의 원형을 보여주는 곳으로, 낮의 열기와 밤의 혹독한 추위를 통해 구름 기둥과 불 기둥의 은혜를 실감합니다.',
+    locations: [{ id: 'pilgrim-wadi-rum', name: '와디 룸', nameEn: 'Wadi Rum', coord: [29.5760, 35.4206], refs: [], desc: '출애굽 광야 여정의 원형을 보여주는 황량한 사막.' }],
+  },
+  {
+    id: 'pilgrim-jabbok', title: '얍복강 (Jabbok River)', subtitle: '야곱이 씨름한 밤', testament: 'OT', kind: 'region',
+    book: '2. 요르단 (Jordan)', era: '족장 시대', year: -1900, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '요단강 동쪽에서 흘러내리는 험준한 계곡 형태의 지류로 고도 차이가 심합니다. 야곱이 에서를 만나기 전 천사와 밤새 씨름해 "이스라엘"이라는 이름을 받은 영적 결전의 장소로, 그의 절박함을 묵상하게 합니다.',
+    locations: [{ id: 'pilgrim-jabbok', name: '얍복강', nameEn: 'Jabbok River', coord: [32.1856, 35.8442], refs: [], desc: '야곱이 천사와 씨름해 "이스라엘" 이름을 받은 곳.' }],
+  },
+  {
+    id: 'pilgrim-madaba', title: '마다바 (Madaba)', subtitle: '6세기 성지 모자이크 지도', testament: 'OT', kind: 'region',
+    book: '2. 요르단 (Jordan)', era: '비잔틴 시대 (모자이크 지도)', year: 560, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '수도 암만 남쪽 30km, 고대 "왕의 대로" 상의 고원 도시. 성 조지 교회 바닥의 6세기 성지 모자이크 지도를 통해 고대인의 시각으로 그려진 성지 지형을 확인할 수 있습니다.',
+    locations: [{ id: 'pilgrim-madaba', name: '마다바', nameEn: 'Madaba', coord: [31.7197, 35.7936], refs: [], desc: '6세기 성지 모자이크 지도가 있는 성 조지 교회가 위치한 곳.' }],
+  },
+  {
+    id: 'pilgrim-sinai', title: '시내산 및 성 카타리나 수도원 (Mount Sinai)', subtitle: '십계명을 받은 구속사의 핵심 현장', testament: 'OT', kind: 'region',
+    book: '3. 이집트 (Egypt)', era: '출애굽 시대', year: -1446, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '시나이반도 남부의 해발 2,285m 화강암 바위산으로 모세가 십계명을 받은 구속사의 핵심 현장입니다. 새벽 산행 후 정상에서 일출 예배를 드리며, 산 아래 불타는 떨기나무 전승의 수도원을 방문합니다.',
+    locations: [{ id: 'pilgrim-sinai', name: '시내산', nameEn: 'Mount Sinai', coord: [28.5392, 33.9756], refs: [], desc: '모세가 십계명과 율법을 받은 구속사의 핵심 현장.' }],
+  },
+  {
+    id: 'pilgrim-marah', title: '마라의 샘 (Marah)', subtitle: '쓴 물이 단 물로', testament: 'OT', kind: 'region',
+    book: '3. 이집트 (Egypt)', era: '출애굽 시대', year: -1446, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '수에즈 운하를 건너 시나이반도 서부 해안을 따라가는 광야 길목의 오아시스. 출애굽 후 사흘 만에 처음 만났으나 물이 써서 원망했던 곳으로, 나뭇가지로 물을 달게 하신 여호와 라파의 현장입니다.',
+    locations: [{ id: 'pilgrim-marah', name: '마라', nameEn: 'Marah', coord: [29.2000, 32.9000], refs: [], desc: '쓴 물이 단 물로 변한 여호와 라파의 현장.' }],
+  },
+  {
+    id: 'pilgrim-elim', title: '엘림 (Elim)', subtitle: '샘 열둘과 종려나무의 쉼터', testament: 'OT', kind: 'region',
+    book: '3. 이집트 (Egypt)', era: '출애굽 시대', year: -1446, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '마라의 샘 남쪽에 위치한 비옥한 오아시스 지역. 샘 열둘과 종려나무 일흔 그루가 있던 쉼터로, 마라의 시험 직후 예비된 이곳을 보며 인내의 신앙을 배웁니다.',
+    locations: [{ id: 'pilgrim-elim', name: '엘림', nameEn: 'Elim', coord: [29.0000, 33.0000], refs: [], desc: '샘 열둘과 종려나무 일흔 그루가 있던 오아시스 쉼터.' }],
+  },
+  {
+    id: 'pilgrim-tarsus', title: '다소 (Tarsus)', subtitle: '사도 바울의 고향', testament: 'NT', kind: 'region',
+    book: '4. 튀르키예 (Türkiye)', era: '초대교회 시대', year: 5, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '튀르키예 남부 지중해 연안의 비옥한 평야에 위치한 로마 시대 학문·무역 도시. 사도 바울의 고향으로, 바울 생가 터와 우물을 보며 이방인의 사도로 준비된 지리적 배경을 묵상합니다.',
+    locations: [{ id: 'pilgrim-tarsus', name: '다소', nameEn: 'Tarsus', coord: [36.9179, 34.8954], refs: [], desc: '이방인의 사도로 준비된 사도 바울의 고향.' }],
+  },
+  {
+    id: 'pilgrim-cappadocia', title: '갑바도기아 (Cappadocia)', subtitle: '지하 도시와 동굴 교회', testament: 'NT', kind: 'region',
+    book: '4. 튀르키예 (Türkiye)', era: '로마 박해 시대', year: 300, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '화산 폭발과 풍화 작용으로 형성된 기묘한 바위 기둥이 가득한 아나톨리아 고원. 로마 박해를 피해 기독교인들이 파놓은 대규모 지하 도시와 동굴 교회들이 모여 있어 순교 신앙의 야성을 배우는 곳입니다.',
+    locations: [{ id: 'pilgrim-cappadocia', name: '갑바도기아', nameEn: 'Cappadocia', coord: [38.6431, 34.8286], refs: [], desc: '박해를 피해 판 대규모 지하 도시와 동굴 교회가 있는 곳.' }],
+  },
+  {
+    id: 'pilgrim-laodicea-hierapolis', title: '라오디게아 & 파묵칼레 (Laodicea & Hierapolis)', subtitle: '"차지도 덥지도 않은" 교회', testament: 'NT', kind: 'region',
+    book: '4. 튀르키예 (Türkiye)', era: '초대교회 시대 (요한계시록)', year: 95, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '뜨거운 온천 지대(히에라볼리)와 차가운 만년설 물이 내려오는 골로새 사이의 금융 중심지. "차지도 덥지도 않다" 책망받은 라오디게아 교회가 있던 곳으로, 온천수가 흘러오며 미지근해지고 석회질로 마실 수 없게 되는 실제 지형을 확인합니다.',
+    locations: [
+      { id: 'pilgrim-laodicea', name: '라오디게아', nameEn: 'Laodicea', coord: [37.8382, 29.1081], refs: [], desc: '"차지도 덥지도 않다" 책망받은 요한계시록의 교회.' },
+      { id: 'pilgrim-hierapolis', name: '히에라볼리(파묵칼레)', nameEn: 'Hierapolis', coord: [37.9236, 29.1275], refs: [], desc: '뜨거운 온천수가 흘러내리는 석회 지대.' },
+    ],
+  },
+  {
+    id: 'pilgrim-smyrna', title: '서머나 교회 (Smyrna / 현 이즈미르)', subtitle: '"죽도록 충성하라" 칭찬받은 교회', testament: 'NT', kind: 'region',
+    book: '4. 튀르키예 (Türkiye)', era: '초대교회 시대 (요한계시록)', year: 95, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '튀르키예 서해안의 번창한 고대 항구 도시(현 이즈미르). "죽도록 충성하라" 칭찬받은 교회가 있던 곳으로, 불속에서도 신앙을 지키며 순교한 사도 요한의 제자 폴리캅 감독 순교 기념교회를 방문합니다.',
+    locations: [{ id: 'pilgrim-smyrna', name: '서머나', nameEn: 'Smyrna', modern: '이즈미르', coord: [38.4192, 27.1287], refs: [], desc: '"죽도록 충성하라" 칭찬받은 요한계시록의 교회.' }],
+  },
+  {
+    id: 'pilgrim-seven-churches-2', title: '사데·빌라델비아·버가모·두아디라 교회 유적', subtitle: '소아시아 일곱 교회의 나머지 도시들', testament: 'NT', kind: 'region',
+    book: '4. 튀르키예 (Türkiye)', era: '초대교회 시대 (요한계시록)', year: 95, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '에베소, 서머나, 라오디게아와 함께 소아시아 일곱 교회를 이루는 서부 고대 도시들. 거대한 신전 터(버가모), 칭찬만 받은 기둥 유적(빌라델비아) 등을 순회하며 초대 교회의 다양한 영적 상태를 대조해 봅니다.',
+    locations: [
+      { id: 'pilgrim-sardis', name: '사데', nameEn: 'Sardis', coord: [38.4879, 28.0403], refs: [], desc: '살았다 하나 죽은 교회라 책망받은 곳.' },
+      { id: 'pilgrim-philadelphia', name: '빌라델비아', nameEn: 'Philadelphia', coord: [38.3527, 28.5133], refs: [], desc: '책망 없이 칭찬만 받은 요한계시록의 교회.' },
+      { id: 'pilgrim-pergamon', name: '버가모', nameEn: 'Pergamon', coord: [39.1213, 27.1803], refs: [], desc: '거대한 제우스 신전 터가 있는 "사탄의 권좌"의 도시.' },
+      { id: 'pilgrim-thyatira', name: '두아디라', nameEn: 'Thyatira', coord: [38.9204, 27.8438], refs: [], desc: '자칭 선지자 이세벨을 용납했다고 책망받은 교회.' },
+    ],
+  },
+  {
+    id: 'pilgrim-philippi', title: '빌립보 (Philippi)', subtitle: '유럽 최초의 교회', testament: 'NT', kind: 'region',
+    book: '5. 그리스 (Greece)', era: '초대교회 시대', year: 50, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '그리스 북부 마케도니아 관문, 로마 군사 도로 에그나티아 길이 지나는 요충지. 바울이 세운 유럽 최초의 교회로, 유럽 첫 개종자 루디아의 세례 터(강가)와 찬송으로 지진이 났던 감옥 터가 보존되어 있습니다.',
+    locations: [{ id: 'pilgrim-philippi', name: '빌립보', nameEn: 'Philippi', coord: [41.0130, 24.2870], refs: [], desc: '바울이 세운 유럽 최초의 교회, 루디아의 세례 터.' }],
+  },
+  {
+    id: 'pilgrim-thessalonica-berea', title: '데살로니가 & 베뢰아 (Thessalonica & Berea)', subtitle: '말씀을 간절히 상고한 사람들', testament: 'NT', kind: 'region',
+    book: '5. 그리스 (Greece)', era: '초대교회 시대', year: 50, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '마케도니아의 거대 항구 도시(데살로니가)와 그 남서쪽 조용한 내륙 도시(베뢰아). 3주 사역으로 건강하게 자라난 데살로니가 교회와, "간절한 마음으로 말씀을 상고했다"는 베뢰아의 말씀 연구 터를 함께 방문합니다.',
+    locations: [
+      { id: 'pilgrim-thessalonica', name: '데살로니가', nameEn: 'Thessalonica', coord: [40.6401, 22.9444], refs: [], desc: '3주 사역으로 건강하게 자라난 교회, 데살로니가전후서의 수신지.' },
+      { id: 'pilgrim-berea', name: '베뢰아', nameEn: 'Berea', coord: [40.5240, 22.2030], refs: [], desc: '말씀을 날마다 간절히 상고한 신사적인 사람들이 있던 곳.' },
+    ],
+  },
+  {
+    id: 'pilgrim-athens', title: '아테네 아레오바고 언덕 (Athens)', subtitle: '"알지 못하는 신"에게 드린 변증', testament: 'NT', kind: 'region',
+    book: '5. 그리스 (Greece)', era: '초대교회 시대', year: 51, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '고대 그리스 철학의 심장부 아크로폴리스 옆의 가파른 바위 언덕. 바울이 에피쿠로스·스토아 철학자들을 상대로 "알지 못하는 신에게" 비문을 인용하며 변증 설교를 펼친 장소입니다.',
+    locations: [{ id: 'pilgrim-athens', name: '아레오바고 언덕', nameEn: 'Areopagus', coord: [37.9715, 23.7238], refs: [], desc: '바울이 철학자들을 상대로 변증 설교를 펼친 언덕.' }],
+  },
+  {
+    id: 'pilgrim-corinth', title: '고린도 (Corinth)', subtitle: '1년 6개월 머물며 세운 교회', testament: 'NT', kind: 'region',
+    book: '5. 그리스 (Greece)', era: '초대교회 시대', year: 51, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '펠로폰네소스반도와 본토를 잇는 지협 도시로 양쪽 항구를 둔 무역과 유흥의 중심지였습니다. 바울이 1년 6개월간 머물며 천막을 깁고 세운 교회로, 총독 재판석(베마 성좌)과 고린도 운하를 방문합니다.',
+    locations: [{ id: 'pilgrim-corinth', name: '고린도', nameEn: 'Corinth', coord: [37.9060, 22.8780], refs: [], desc: '바울이 1년 6개월간 머물며 세운 무역 도시의 교회.' }],
+  },
+  {
+    id: 'pilgrim-patmos', title: '밧모섬 (Patmos)', subtitle: '요한계시록이 기록된 섬', testament: 'NT', kind: 'region',
+    book: '5. 그리스 (Greece)', era: '초대교회 시대 (요한계시록)', year: 95, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '에베소 서쪽 에게해 남부의 척박한 바위섬으로 로마 시대 유배지였습니다. 사도 요한이 유배되어 하늘 문이 열리는 환상을 보고 요한계시록을 기록한 성령의 동굴이 있는 곳입니다.',
+    locations: [{ id: 'pilgrim-patmos', name: '밧모섬', nameEn: 'Patmos', coord: [37.3092, 26.5457], refs: [], desc: '사도 요한이 요한계시록을 기록한 유배지.' }],
+  },
+  {
+    id: 'pilgrim-colosseum-catacombs', title: '로마 콜로세움 & 카타콤 (Colosseum & Catacombs)', subtitle: '순교와 지하 예배의 현장', testament: 'NT', kind: 'region',
+    book: '6. 이탈리아 (Italy)', era: '로마 박해 시대', year: 250, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '로마 제국 수도 한복판의 거대 원형 경기장과 외곽 지하의 기독교인 지하 무덤. 사자 밥이 되면서도 신앙을 지킨 순교 현장과, 핍박을 피해 예배 중심지가 된 지하 무덤을 돌며 순례단이 가장 눈물을 많이 흘리는 곳입니다.',
+    locations: [
+      { id: 'pilgrim-colosseum', name: '콜로세움', nameEn: 'Colosseum', coord: [41.8902, 12.4922], refs: [], desc: '사자 밥이 되면서도 신앙을 지킨 순교의 현장.' },
+      { id: 'pilgrim-catacombs', name: '카타콤', nameEn: 'Catacombs', coord: [41.8508, 12.5147], refs: [], desc: '핍박을 피해 예배 중심지가 된 지하 무덤.' },
+    ],
+  },
+  {
+    id: 'pilgrim-tre-fontane', title: '바울 순교 기념교회 / 세 분수 교회 (Tre Fontane)', subtitle: '사도 바울의 참수 순교지', testament: 'NT', kind: 'region',
+    book: '6. 이탈리아 (Italy)', era: '로마 박해 시대', year: 67, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '로마 남부 외곽의 고요한 수도원 부지로 사도 바울이 참수형으로 순교한 자리입니다. 목이 잘려 세 번 튄 곳마다 샘이 솟았다는 전승과 참수 시 목을 얹은 대리석 기둥 유적이 보존되어 있습니다.',
+    locations: [{ id: 'pilgrim-tre-fontane', name: '세 분수 교회', nameEn: 'Tre Fontane', coord: [41.8283, 12.4644], refs: [], desc: '사도 바울이 참수형으로 순교한 자리.' }],
+  },
+  {
+    id: 'pilgrim-mamertine', title: '로마 마메르틴 감옥 (Mamertine Prison)', subtitle: '바울의 마지막 유언', testament: 'NT', kind: 'region',
+    book: '6. 이탈리아 (Italy)', era: '로마 박해 시대', year: 67, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '로마 포로 로마노 옆의 깊고 차가운 지하 돌감옥으로 최고 정치범 수용소였습니다. 사도 바울이 순교 직전 디모데후서의 유언("나는 선한 싸움을 싸우고...")을 남긴 감옥 추정지로, 사도의 마지막 숨결을 묵상합니다.',
+    locations: [{ id: 'pilgrim-mamertine', name: '마메르틴 감옥', nameEn: 'Mamertine Prison', coord: [41.8931, 12.4853], refs: [], desc: '바울이 순교 직전 디모데후서의 유언을 남긴 감옥 추정지.' }],
+  },
+  {
+    id: 'pilgrim-quo-vadis', title: '쿼바디스 교회 (Church of Domine Quo Vadis)', subtitle: '"주여 어디로 가시나이까"', testament: 'NT', kind: 'region',
+    book: '6. 이탈리아 (Italy)', era: '로마 박해 시대', year: 64, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
+    summary: '고대 로마 군사 도로 아피아 가도 초입의 작은 교회. 박해를 피해 로마를 탈출하던 베드로가 로마로 가시는 예수님을 만나 "주여, 어디로 가시나이까" 묻고 회개해 순교하러 돌이킨 결단의 장소입니다.',
+    locations: [{ id: 'pilgrim-quo-vadis', name: '쿼바디스 교회', nameEn: 'Domine Quo Vadis', coord: [41.8560, 12.5108], refs: [], desc: '베드로가 예수님을 만나 회개하고 돌이킨 결단의 장소.' }],
+  },
+]
+
+// 지도 위 마커/카드 조회용 THEMES + KEY_PLACES + PILGRIMAGE 통합 목록. Timeline은 THEMES만
+// 사용해 핵심지명·성지순례가 연대표에 섞여 표시되지 않도록 분리합니다.
+export const ALL_THEMES: BibleMapTheme[] = [...THEMES, ...KEY_PLACES, ...PILGRIMAGE]
