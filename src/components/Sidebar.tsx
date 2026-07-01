@@ -29,6 +29,18 @@ function sectionOf(id: string | null): SectionKey | null {
   return theme ? theme.testament : null
 }
 
+// 같은 book(소주제)끼리 원래 순서를 유지하며 묶습니다. 핵심지명은 book이 모든 항목에
+// 반복돼 카드마다 표시하는 대신 소주제 제목 하나로 묶어 보여주기 위해 사용합니다.
+function groupByBook(themes: BibleMapTheme[]): { book: string; items: BibleMapTheme[] }[] {
+  const groups: { book: string; items: BibleMapTheme[] }[] = []
+  for (const t of themes) {
+    const last = groups[groups.length - 1]
+    if (last && last.book === t.book) last.items.push(t)
+    else groups.push({ book: t.book, items: [t] })
+  }
+  return groups
+}
+
 export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKeyPlace, onToggleCompare }: Props) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(() => {
@@ -63,9 +75,7 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
         <div className="info">
           <div className="title">{t.title}</div>
           <div className="sub">{t.subtitle}</div>
-          <div className="meta">
-            {t.book} · {t.era}
-          </div>
+          <div className="meta">{isKey ? t.era : `${t.book} · ${t.era}`}</div>
         </div>
         <button
           className={`compare-btn${isSelected ? ' on' : ''}`}
@@ -126,7 +136,13 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
               <span>핵심지명 KEY PLACES</span>
               <span className="chevron">{isOpen('KEY') ? '▾' : '▸'}</span>
             </button>
-            {isOpen('KEY') && keyPlaces.map((t) => card(t, true))}
+            {isOpen('KEY') &&
+              groupByBook(keyPlaces).map((g) => (
+                <div key={g.book}>
+                  <div className="subsection-label">{g.book}</div>
+                  {g.items.map((t) => card(t, true))}
+                </div>
+              ))}
           </>
         )}
 
