@@ -669,11 +669,11 @@ button {
 
 /* ---------- Timeline ---------- */
 .timeline {
-  height: 96px;
+  height: 78px;
   background: var(--panel);
   border-top: 1px solid var(--border);
   position: relative;
-  flex: 0 0 96px;
+  flex: 0 0 78px;
 }
 .timeline-label {
   position: absolute;
@@ -1007,8 +1007,8 @@ button.ref-chip:hover {
 
   .timeline {
     padding-bottom: env(safe-area-inset-bottom);
-    height: calc(96px + env(safe-area-inset-bottom));
-    flex-basis: calc(96px + env(safe-area-inset-bottom));
+    height: calc(78px + env(safe-area-inset-bottom));
+    flex-basis: calc(78px + env(safe-area-inset-bottom));
   }
 
   .verse-overlay {

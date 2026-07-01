@@ -92,7 +92,7 @@ export default function Timeline({ activeId, selectedIds, onSelect }: Props) {
           // 모두 한 줄로 배치하되, 위로는 "연대표" 라벨과 아래로는 연도 눈금 숫자와
           // 겹치지 않도록 여백을 둡니다. (가까운 연도끼리는 이미 하나의 클러스터로 묶여 있어
           // 같은 줄에 놓아도 서로 겹치지 않습니다.)
-          const bottom = '26px'
+          const bottom = '24px'
           const left = `${pct(cluster.year)}%`
           const isSolo = cluster.themes.length === 1
           const hasActive = cluster.themes.some((t) => t.id === activeId)
