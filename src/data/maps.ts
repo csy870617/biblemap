@@ -152,7 +152,7 @@ export const THEMES: BibleMapTheme[] = [
       '솔로몬 사후 한 나라가 북이스라엘(수도 사마리아)과 남유다(수도 예루살렘)로 갈라진 시대입니다. 두 왕국의 주요 도시를 지도로 보면 열왕기·예언서의 무대가 정리됩니다.',
     locations: [
       { id: 'jerusalem-d', name: '예루살렘 〔남유다 수도〕', nameEn: 'Jerusalem', coord: [31.7683, 35.2137], refs: ['열왕기상 12:21'], desc: '남유다의 수도이자 성전이 있는 도시.' },
-      { id: 'hebron-d', name: '헤브론 〔남유다〕', nameEn: 'Hebron', coord: [31.5326, 35.0998], refs: ['열왕기상 2:11'], desc: '유다 남부의 주요 성읍.' },
+      { id: 'hebron-d', name: '헤브론 〔남유다〕', nameEn: 'Hebron', coord: [31.5326, 35.0998], refs: ['역대하 11:10'], desc: '르호보암이 요새화한 유다 남부의 주요 성읍.' },
       { id: 'lachish', name: '라기스 〔남유다〕', nameEn: 'Lachish', coord: [31.5650, 34.8490], refs: ['열왕기하 18:13-14'], desc: '유다의 군사 요새. 앗수르 산헤립의 공격을 받습니다.' },
       { id: 'beersheba-d', name: '브엘세바 〔남유다〕', nameEn: 'Beersheba', coord: [31.2518, 34.7913], refs: ['열왕기상 19:3'], desc: '유다 최남단 경계 도시.' },
       { id: 'samaria', name: '사마리아 〔북이스라엘 수도〕', nameEn: 'Samaria', coord: [32.2806, 35.1900], refs: ['열왕기상 16:24'], desc: '오므리가 세운 북이스라엘의 수도. 아합과 이세벨의 거점.' },
@@ -452,7 +452,7 @@ export const KEY_PLACES: BibleMapTheme[] = [
   },
   {
     id: 'key-kebar', title: '그발 강가 (Kebar River)', subtitle: '바벨론 니푸르 근처의 대운하', testament: 'OT', kind: 'region',
-    book: 'III. 분열 왕국 ~ 포로 시대', era: '포로 시대 (약 BC 586년경)', year: -593, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    book: 'III. 분열 왕국 ~ 포로 시대', era: '포로 시대 (약 BC 593년경)', year: -593, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
     summary: '포로로 잡혀간 에스겔이 환상을 본 곳으로, 예루살렘과의 지리적 단절과 절망을 보여주는 장소입니다.',
     locations: [{ id: 'key-kebar', name: '그발 강가', nameEn: 'Kebar River', coord: [32.1300, 45.1900], refs: [], desc: '포로로 잡혀간 에스겔이 환상을 본 곳으로, 예루살렘과의 지리적 단절과 절망을 보여주는 장소입니다.' }],
   },
@@ -501,8 +501,8 @@ export const KEY_PLACES: BibleMapTheme[] = [
   {
     id: 'key-damascus', title: '다메섹 (Damascus)', subtitle: '현 시리아 수도', testament: 'NT', kind: 'region',
     book: 'V. 사도행전 & 초대 교회', era: '초대교회 시대', year: 34, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
-    summary: '예루살렘에서 북쪽으로 약 240km 떨어진 고대 도시로, 사울이 이 먼 거리까지 믿는 자들을 잡으러 가다가 회심한 열정의 거리를 보여줍니다.',
-    locations: [{ id: 'key-damascus', name: '다메섹', nameEn: 'Damascus', modern: '시리아', coord: [33.5138, 36.2765], refs: [], desc: '예루살렘에서 북쪽으로 약 240km 떨어진 고대 도시로, 사울이 이 먼 거리까지 믿는 자들을 잡으러 가다가 회심한 열정의 거리를 보여줍니다.' }],
+    summary: '예루살렘에서 북쪽으로 약 220km 떨어진 고대 도시로, 사울이 이 먼 거리까지 믿는 자들을 잡으러 가다가 회심한 열정의 거리를 보여줍니다.',
+    locations: [{ id: 'key-damascus', name: '다메섹', nameEn: 'Damascus', modern: '시리아', coord: [33.5138, 36.2765], refs: [], desc: '예루살렘에서 북쪽으로 약 220km 떨어진 고대 도시로, 사울이 이 먼 거리까지 믿는 자들을 잡으러 가다가 회심한 열정의 거리를 보여줍니다.' }],
   },
   {
     id: 'key-antioch', title: '수리아 안디옥 (Antioch in Syria)', subtitle: '로마 제국 제3의 대도시 (현 터키 안타키아)', testament: 'NT', kind: 'region',
@@ -561,7 +561,7 @@ export const PILGRIMAGE: BibleMapTheme[] = [
   {
     id: 'pilgrim-via-dolorosa', title: '비아 돌로로사 (Via Dolorosa / 십자가의 길)', subtitle: '예루살렘 구시가지, 고난의 14처소', testament: 'NT', kind: 'region',
     book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 30, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
-    summary: '안토니아 요새에서 골고다 언덕(성묘교회)까지 이어지는 예루살렘 구시가지의 약 1km 경사길. 예수님이 십자가를 지고 가신 14처소를 복음서를 따라 직접 걸으며 고난을 묵상합니다.',
+    summary: '안토니아 요새에서 골고다 언덕(성묘교회)까지 이어지는 예루살렘 구시가지의 약 600m 경사길. 예수님이 십자가를 지고 가신 14처소를 복음서를 따라 직접 걸으며 고난을 묵상합니다.',
     locations: [{ id: 'pilgrim-via-dolorosa', name: '비아 돌로로사', nameEn: 'Via Dolorosa', coord: [31.7794, 35.2308], refs: [], desc: '예수님이 십자가를 지고 가신 고난의 14처소.' }],
   },
   {
@@ -582,7 +582,7 @@ export const PILGRIMAGE: BibleMapTheme[] = [
   {
     id: 'pilgrim-gallicantu', title: '베드로 통곡교회 (St. Peter in Gallicantu)', subtitle: '가야바 법정 터, 통곡의 자리', testament: 'NT', kind: 'region',
     book: '1. 이스라엘 (Israel)', era: '예수님 생애', year: 30, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
-    summary: '예루살렘 시온산 남쪽 경사지, 대제사장 가야바의 저택 터. 베드로가 닭 울기 전 예수님을 세 번 부인하고 통곡한 곳으로, 깊은 지하 감옥과 고대 돌계단이 남아 있습니다.',
+    summary: '예루살렘 시온산 동쪽 경사지, 대제사장 가야바의 저택 터. 베드로가 닭 울기 전 예수님을 세 번 부인하고 통곡한 곳으로, 깊은 지하 감옥과 고대 돌계단이 남아 있습니다.',
     locations: [{ id: 'pilgrim-gallicantu', name: '베드로 통곡교회', nameEn: 'St. Peter in Gallicantu', coord: [31.7735, 35.2296], refs: [], desc: '베드로가 예수님을 세 번 부인하고 통곡한 가야바 법정 터.' }],
   },
   {
@@ -673,7 +673,7 @@ export const PILGRIMAGE: BibleMapTheme[] = [
     id: 'pilgrim-jabbok', title: '얍복강 (Jabbok River)', subtitle: '야곱이 씨름한 밤', testament: 'OT', kind: 'region',
     book: '2. 요르단 (Jordan)', era: '족장 시대', year: -1900, color: PILGRIM_COLOR, icon: PILGRIM_ICON,
     summary: '요단강 동쪽에서 흘러내리는 험준한 계곡 형태의 지류로 고도 차이가 심합니다. 야곱이 에서를 만나기 전 천사와 밤새 씨름해 "이스라엘"이라는 이름을 받은 영적 결전의 장소로, 그의 절박함을 묵상하게 합니다.',
-    locations: [{ id: 'pilgrim-jabbok', name: '얍복강', nameEn: 'Jabbok River', coord: [32.1856, 35.8442], refs: [], desc: '야곱이 천사와 씨름해 "이스라엘" 이름을 받은 곳.' }],
+    locations: [{ id: 'pilgrim-jabbok', name: '얍복강', nameEn: 'Jabbok River', coord: [32.1858, 35.6868], refs: [], desc: '야곱이 천사와 씨름해 "이스라엘" 이름을 받은 곳.' }],
   },
   {
     id: 'pilgrim-madaba', title: '마다바 (Madaba)', subtitle: '6세기 성지 모자이크 지도', testament: 'OT', kind: 'region',
