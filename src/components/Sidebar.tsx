@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { BibleMapTheme } from '../data/maps'
-import { THEMES, KEY_PLACES, PILGRIMAGE } from '../data/maps'
+import { THEMES, KEY_PLACES, PILGRIMAGE, KOREA_SITES } from '../data/maps'
 
 interface Props {
   activeId: string | null
@@ -10,7 +10,7 @@ interface Props {
   onToggleCompare: (id: string) => void // 비교 목록 토글
 }
 
-type SectionKey = 'OT' | 'NT' | 'KEY' | 'PILGRIM'
+type SectionKey = 'OT' | 'NT' | 'KEY' | 'PILGRIM' | 'KR'
 
 function matches(t: BibleMapTheme, q: string) {
   if (!q) return true
@@ -26,15 +26,21 @@ function sectionOf(id: string | null): SectionKey | null {
   if (!id) return null
   if (KEY_PLACES.some((t) => t.id === id)) return 'KEY'
   if (PILGRIMAGE.some((t) => t.id === id)) return 'PILGRIM'
+  if (KOREA_SITES.some((t) => t.id === id)) return 'KR'
   const theme = THEMES.find((t) => t.id === id)
   return theme ? theme.testament : null
 }
 
-// activeId가 속한 핵심지명/성지순례 소주제(book)를 찾아 반환합니다. sectionOf와 같은 이유로,
-// 초기 펼침 상태를 정할 때 씁니다.
+// activeId가 속한 핵심지명/성지순례/국내성지 소주제(book)를 찾아 반환합니다. sectionOf와 같은
+// 이유로, 초기 펼침 상태를 정할 때 씁니다.
 function bookOf(id: string | null): string | null {
   if (!id) return null
-  return KEY_PLACES.find((t) => t.id === id)?.book ?? PILGRIMAGE.find((t) => t.id === id)?.book ?? null
+  return (
+    KEY_PLACES.find((t) => t.id === id)?.book ??
+    PILGRIMAGE.find((t) => t.id === id)?.book ??
+    KOREA_SITES.find((t) => t.id === id)?.book ??
+    null
+  )
 }
 
 // 같은 book(소주제)끼리 원래 순서를 유지하며 묶습니다. 핵심지명은 book이 모든 항목에
@@ -52,14 +58,16 @@ function groupByBook(themes: BibleMapTheme[]): { book: string; items: BibleMapTh
 export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKeyPlace, onToggleCompare }: Props) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState<Record<SectionKey, boolean>>(() => {
-    const initial: Record<SectionKey, boolean> = { OT: false, NT: false, KEY: false, PILGRIM: false }
+    const initial: Record<SectionKey, boolean> = { OT: false, NT: false, KEY: false, PILGRIM: false, KR: false }
     const sec = sectionOf(activeId)
     if (sec) initial[sec] = true
     return initial
   })
   // 한 번에 하나의 섹션만 펼쳐지는 아코디언: 다른 섹션을 열면 나머지는 자동으로 닫힘
   const toggleSection = (s: SectionKey) =>
-    setOpen((prev) => (prev[s] ? { ...prev, [s]: false } : { OT: false, NT: false, KEY: false, PILGRIM: false, [s]: true }))
+    setOpen((prev) =>
+      prev[s] ? { ...prev, [s]: false } : { OT: false, NT: false, KEY: false, PILGRIM: false, KR: false, [s]: true },
+    )
 
   // 핵심지명/성지순례 안의 소주제 펼침 상태(아코디언: 한 번에 하나만 펼쳐짐). 기본은 모두 접힘.
   const [openSub, setOpenSub] = useState<string | null>(() => bookOf(activeId))
@@ -70,7 +78,8 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
   const nt = useMemo(() => THEMES.filter((t) => t.testament === 'NT').filter((t) => matches(t, q)), [q])
   const keyPlaces = useMemo(() => KEY_PLACES.filter((t) => matches(t, q)), [q])
   const pilgrimage = useMemo(() => PILGRIMAGE.filter((t) => matches(t, q)), [q])
-  const filtered = [...ot, ...nt, ...keyPlaces, ...pilgrimage]
+  const koreaSites = useMemo(() => KOREA_SITES.filter((t) => matches(t, q)), [q])
+  const filtered = [...ot, ...nt, ...keyPlaces, ...pilgrimage, ...koreaSites]
   // 검색 중에는 결과가 접힌 섹션/소주제에 숨어 보이지 않는 일이 없도록 모두 강제로 펼침
   const isOpen = (s: SectionKey) => (q ? true : open[s])
   const isSubOpen = (book: string) => (q ? true : openSub === book)
@@ -171,6 +180,25 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
             </button>
             {isOpen('PILGRIM') &&
               groupByBook(pilgrimage).map((g) => (
+                <div key={g.book}>
+                  <button className="subsection-toggle" onClick={() => toggleSub(g.book)} aria-expanded={isSubOpen(g.book)}>
+                    <span>{g.book}</span>
+                    <span className="chevron">{isSubOpen(g.book) ? '▾' : '▸'}</span>
+                  </button>
+                  {isSubOpen(g.book) && g.items.map((t) => card(t, true))}
+                </div>
+              ))}
+          </>
+        )}
+
+        {koreaSites.length > 0 && (
+          <>
+            <button className="section-toggle" onClick={() => toggleSection('KR')} aria-expanded={isOpen('KR')}>
+              <span>한국 성지순례 KOREA</span>
+              <span className="chevron">{isOpen('KR') ? '▾' : '▸'}</span>
+            </button>
+            {isOpen('KR') &&
+              groupByBook(koreaSites).map((g) => (
                 <div key={g.book}>
                   <button className="subsection-toggle" onClick={() => toggleSub(g.book)} aria-expanded={isSubOpen(g.book)}>
                     <span>{g.book}</span>
