@@ -52,6 +52,19 @@ const movingIcon = L.divIcon({
   iconAnchor: [8, 8],
 })
 
+// 배경 지도의 바다 이름 표기 위에 우리가 직접 덮어 그리는 라벨.
+// MapTiler 배경 지도 자체의 라벨(예: "Sea of Japan")은 그대로 둔 채,
+// 그 위에 항상 우리 표기가 보이도록 별도 마커로 그립니다.
+const SEA_LABEL_OVERLAYS: { coord: LngLat; text: string }[] = [{ coord: [40.0, 135.0], text: 'East Sea' }]
+function seaLabelIcon(text: string) {
+  return L.divIcon({
+    className: '',
+    html: `<div class="sea-label">${text}</div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  })
+}
+
 function lerp(a: LngLat, b: LngLat, t: number): LngLat {
   return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]
 }
@@ -256,6 +269,10 @@ export default function MapView(props: Props) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
         )}
+
+        {SEA_LABEL_OVERLAYS.map((label) => (
+          <Marker key={label.text} position={label.coord} icon={seaLabelIcon(label.text)} interactive={false} />
+        ))}
 
         {themes.map((theme) => (
           <ThemeLayer

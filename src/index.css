@@ -351,6 +351,23 @@ button {
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.9);
 }
 
+/* 배경 지도의 바다 이름 표기 위에 덮어 그리는 라벨(예: East Sea) */
+.sea-label {
+  position: relative;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  color: #0f3d5c;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 3px 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
 .legend {
   position: absolute;
   top: 14px;
