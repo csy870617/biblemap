@@ -55,9 +55,10 @@ const movingIcon = L.divIcon({
 // 배경 지도의 바다 이름 표기 위에 우리가 직접 덮어 그리는 라벨.
 // MapTiler 배경 지도 자체의 라벨(예: "Sea of Japan")은 그대로 둔 채,
 // 그 위에 항상 우리 표기가 보이도록 별도 마커로 그립니다.
-const SEA_LABEL_OVERLAYS: { coord: LngLat; text: string }[] = [{ coord: [40.0, 135.0], text: 'East Sea' }]
+const SEA_LABEL_OVERLAYS: { coord: LngLat; text: string }[] = [{ coord: [39.5, 132.5], text: 'East Sea' }]
 const SEA_LABEL_BASE_ZOOM = 5
 const SEA_LABEL_BASE_SIZE = 13
+const SEA_LABEL_MIN_ZOOM = 4 // 이 확대 수준보다 축소하면 라벨을 숨김
 function seaLabelFontSize(zoom: number) {
   return Math.min(30, Math.max(9, SEA_LABEL_BASE_SIZE * 1.2 ** (zoom - SEA_LABEL_BASE_ZOOM)))
 }
@@ -70,11 +71,12 @@ function seaLabelIcon(text: string, fontSize: number) {
   })
 }
 
-// 지도 확대/축소에 맞춰 바다 이름 라벨 글자 크기를 갱신
-function SeaLabelOverlays() {
+// 지도 확대/축소에 맞춰 바다 이름 라벨 글자 크기를 갱신하고, 영어 지도일 때만 표시
+function SeaLabelOverlays({ lang }: { lang: MapLang }) {
   const map = useMap()
   const [zoom, setZoom] = useState(map.getZoom())
   useMapEvent('zoom', () => setZoom(map.getZoom()))
+  if (lang !== 'en' || zoom < SEA_LABEL_MIN_ZOOM) return null
   const fontSize = seaLabelFontSize(zoom)
   return (
     <>
@@ -290,7 +292,7 @@ export default function MapView(props: Props) {
           />
         )}
 
-        <SeaLabelOverlays />
+        <SeaLabelOverlays lang={lang} />
 
         {themes.map((theme) => (
           <ThemeLayer
