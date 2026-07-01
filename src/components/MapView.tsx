@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl, useMap, useMapEvent } from 'react-leaflet'
 import L from 'leaflet'
 import type { BibleMapTheme, LngLat } from '../data/maps'
 import type { MapLang } from './MapTilerLayer'
@@ -56,13 +56,33 @@ const movingIcon = L.divIcon({
 // MapTiler 배경 지도 자체의 라벨(예: "Sea of Japan")은 그대로 둔 채,
 // 그 위에 항상 우리 표기가 보이도록 별도 마커로 그립니다.
 const SEA_LABEL_OVERLAYS: { coord: LngLat; text: string }[] = [{ coord: [40.0, 135.0], text: 'East Sea' }]
-function seaLabelIcon(text: string) {
+const SEA_LABEL_BASE_ZOOM = 5
+const SEA_LABEL_BASE_SIZE = 13
+function seaLabelFontSize(zoom: number) {
+  return Math.min(30, Math.max(9, SEA_LABEL_BASE_SIZE * 1.2 ** (zoom - SEA_LABEL_BASE_ZOOM)))
+}
+function seaLabelIcon(text: string, fontSize: number) {
   return L.divIcon({
     className: '',
-    html: `<div class="sea-label">${text}</div>`,
+    html: `<div class="sea-label" style="font-size:${fontSize}px">${text}</div>`,
     iconSize: [0, 0],
     iconAnchor: [0, 0],
   })
+}
+
+// 지도 확대/축소에 맞춰 바다 이름 라벨 글자 크기를 갱신
+function SeaLabelOverlays() {
+  const map = useMap()
+  const [zoom, setZoom] = useState(map.getZoom())
+  useMapEvent('zoom', () => setZoom(map.getZoom()))
+  const fontSize = seaLabelFontSize(zoom)
+  return (
+    <>
+      {SEA_LABEL_OVERLAYS.map((label) => (
+        <Marker key={label.text} position={label.coord} icon={seaLabelIcon(label.text, fontSize)} interactive={false} />
+      ))}
+    </>
+  )
 }
 
 function lerp(a: LngLat, b: LngLat, t: number): LngLat {
@@ -270,9 +290,7 @@ export default function MapView(props: Props) {
           />
         )}
 
-        {SEA_LABEL_OVERLAYS.map((label) => (
-          <Marker key={label.text} position={label.coord} icon={seaLabelIcon(label.text)} interactive={false} />
-        ))}
+        <SeaLabelOverlays />
 
         {themes.map((theme) => (
           <ThemeLayer
