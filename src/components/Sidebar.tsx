@@ -19,9 +19,23 @@ function matches(t: BibleMapTheme, q: string) {
   return hay.includes(q)
 }
 
+// activeId가 속한 섹션을 찾아 반환합니다. 상세 화면에서 목록으로 돌아왔을 때
+// 방금 보고 있던 항목의 섹션이 접혀 숨어버리지 않도록 초기 펼침 상태를 정할 때 씁니다.
+function sectionOf(id: string | null): SectionKey | null {
+  if (!id) return null
+  if (KEY_PLACES.some((t) => t.id === id)) return 'KEY'
+  const theme = THEMES.find((t) => t.id === id)
+  return theme ? theme.testament : null
+}
+
 export default function Sidebar({ activeId, selectedIds, onOpenTheme, onToggleCompare }: Props) {
   const [query, setQuery] = useState('')
-  const [open, setOpen] = useState<Record<SectionKey, boolean>>({ OT: true, NT: true, KEY: false })
+  const [open, setOpen] = useState<Record<SectionKey, boolean>>(() => {
+    const initial: Record<SectionKey, boolean> = { OT: false, NT: false, KEY: false }
+    const sec = sectionOf(activeId)
+    if (sec) initial[sec] = true
+    return initial
+  })
   const toggleSection = (s: SectionKey) => setOpen((prev) => ({ ...prev, [s]: !prev[s] }))
 
   const q = query.trim().toLowerCase()
