@@ -60,12 +60,9 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
   const toggleSection = (s: SectionKey) =>
     setOpen((prev) => (prev[s] ? { ...prev, [s]: false } : { OT: false, NT: false, KEY: false, [s]: true }))
 
-  // 핵심지명 안의 소주제 펼침 상태. 기본은 모두 접힘.
-  const [openSub, setOpenSub] = useState<Record<string, boolean>>(() => {
-    const book = bookOf(activeId)
-    return book ? { [book]: true } : {}
-  })
-  const toggleSub = (book: string) => setOpenSub((prev) => ({ ...prev, [book]: !prev[book] }))
+  // 핵심지명 안의 소주제 펼침 상태(아코디언: 한 번에 하나만 펼쳐짐). 기본은 모두 접힘.
+  const [openSub, setOpenSub] = useState<string | null>(() => bookOf(activeId))
+  const toggleSub = (book: string) => setOpenSub((prev) => (prev === book ? null : book))
 
   const q = query.trim().toLowerCase()
   const ot = useMemo(() => THEMES.filter((t) => t.testament === 'OT').filter((t) => matches(t, q)), [q])
@@ -74,7 +71,7 @@ export default function Sidebar({ activeId, selectedIds, onOpenTheme, onSelectKe
   const filtered = [...ot, ...nt, ...keyPlaces]
   // 검색 중에는 결과가 접힌 섹션/소주제에 숨어 보이지 않는 일이 없도록 모두 강제로 펼침
   const isOpen = (s: SectionKey) => (q ? true : open[s])
-  const isSubOpen = (book: string) => (q ? true : !!openSub[book])
+  const isSubOpen = (book: string) => (q ? true : openSub === book)
 
   const card = (t: BibleMapTheme, isKey = false) => {
     const isActive = t.id === activeId
