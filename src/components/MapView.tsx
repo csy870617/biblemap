@@ -221,12 +221,12 @@ export default function MapView(props: Props) {
             <>
               <LayersControl.BaseLayer checked={!hasGoogle} name="MapTiler 지도 (한글)">
                 <Suspense fallback={null}>
-                  <MapTilerLayer apiKey={MAPTILER_KEY!} style="streets-v2" language="ko" />
+                  <MapTilerLayer apiKey={MAPTILER_KEY!} style="streets-v4" language="ko" />
                 </Suspense>
               </LayersControl.BaseLayer>
               <LayersControl.BaseLayer name="MapTiler 위성 (한글)">
                 <Suspense fallback={null}>
-                  <MapTilerLayer apiKey={MAPTILER_KEY!} style="hybrid" language="ko" />
+                  <MapTilerLayer apiKey={MAPTILER_KEY!} style="hybrid-v4" language="ko" />
                 </Suspense>
               </LayersControl.BaseLayer>
             </>
