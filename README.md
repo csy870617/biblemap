@@ -13,6 +13,7 @@
 - **연대표(타임라인)** — BC 2000 ~ AD 100 시대순으로 지도를 배치, 클릭해 이동
 - **베이스맵 전환** — 우하단 레이어 버튼으로 배경 지도 선택
   - 무료(키 불필요): **영문 지명**(Wikimedia) · **현지어**(OSM) · 지형(OpenTopo) · 위성(Esri)
+  - **MapTiler**(한글 지명, 벡터): 무료 키로 사용 가능 (아래 참고)
   - **구글 지도**(한글 지명): API 키를 넣으면 도로/위성/지형 사용 가능 (아래 참고)
 - **검색** — 지명·성경 구절·테마로 빠르게 찾기 (예: `에베소`, `출애굽`, `사도행전 27`)
 - **현대 지명 병기** — 옛 지명과 오늘날 위치를 함께 표시
@@ -37,11 +38,21 @@ GitHub Pages에 배포합니다.
 기본 배경은 **영문 지명 무료 지도**입니다(별도 설정 불필요). 성경 땅의 지명이 히브리어·아랍어가
 아닌 영어로 표시됩니다. "현지어" 레이어를 고르면 원어 지명으로 볼 수 있습니다.
 
+**한글 지명 지도(MapTiler, 무료 권장)** — 결제 없이 쓸 수 있는 방법입니다:
+
+```bash
+cp .env.example .env
+# .env 에 VITE_MAPTILER_KEY=발급받은키 입력 후 재실행
+```
+
+키 발급: [MapTiler Cloud](https://cloud.maptiler.com/) 가입 → Account → Keys. 무료 요금제는
+월 타일 요청 10만 회이며, 초과하면 다음 달까지 자동 정지되어 **요금이 청구되지 않습니다.**
+(벡터 지도라 무거워서, 키가 있을 때만 해당 코드가 지연 로딩됩니다.)
+
 **구글 지도(한글 지명)를 배경으로 쓰려면** Google Maps Platform API 키가 필요합니다
 (결제 계정 연결 필수, 매월 무료 크레딧 제공):
 
 ```bash
-cp .env.example .env
 # .env 에 VITE_GOOGLE_MAPS_API_KEY=발급받은키 입력 후 재실행
 ```
 
@@ -65,7 +76,8 @@ npm run preview  # 빌드 결과 미리보기
 
 - Vite + React + TypeScript
 - Leaflet + OpenStreetMap(영문/현지어) / OpenTopoMap / Esri (무료, 키 불필요)
-- 선택: 구글 지도 (react-leaflet-google-layer, API 키 필요)
+- 선택: MapTiler 벡터 지도(한글, 무료 키) · 구글 지도(한글, 유료 키)
+- 배경 우선순위: 구글 키 > MapTiler 키 > 무료 영문 지도
 - 성경 본문: getbible.net v2 (런타임 조회, 실패 시 BibleGateway 링크로 대체)
 
 ## 🗂️ 구조

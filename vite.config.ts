@@ -8,4 +8,8 @@ export default defineConfig({
     host: true,
     port: 5173,
   },
+  build: {
+    // MapTiler(maplibre) 청크는 지연 로딩되므로 경고 임계값을 완화
+    chunkSizeWarningLimit: 1500,
+  },
 })
