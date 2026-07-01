@@ -52,15 +52,14 @@ export default function App() {
   // 비교 목록 토글
   const toggleCompare = (id: string) => {
     stopPlay()
-    setSelectedIds((prev) => {
-      if (prev.includes(id)) {
-        const next = prev.filter((x) => x !== id)
-        if (activeId === id) setActiveId(next[0] ?? null)
-        return next
-      }
+    if (selectedIds.includes(id)) {
+      const next = selectedIds.filter((x) => x !== id)
+      if (activeId === id) setActiveId(next[0] ?? null)
+      setSelectedIds(next)
+    } else {
       if (!activeId) setActiveId(id)
-      return [...prev, id]
-    })
+      setSelectedIds([...selectedIds, id])
+    }
   }
 
   const selectLoc = (id: string) => {

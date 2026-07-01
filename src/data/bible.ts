@@ -125,24 +125,33 @@ export interface PassageResult {
   verses: Verse[]
 }
 
+// 응답이 오지 않는 채로 무한정 "불러오는 중" 상태에 머무르지 않도록 타임아웃을 둡니다.
+const FETCH_TIMEOUT_MS = 10000
+
 // getbible.net v2에서 본문 가져오기
 export async function fetchPassage(ref: ParsedRef, lang: 'ko' | 'en'): Promise<PassageResult> {
   const translation = lang === 'ko' ? 'korean' : 'kjv'
   const url = `https://api.getbible.net/v2/${translation}/${ref.info.num}/${ref.chapter}.json`
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const data = await res.json()
-  const all: Verse[] = (data.verses ?? []).map((v: { verse: number; text: string }) => ({
-    verse: v.verse,
-    text: (v.text ?? '').trim(),
-  }))
-  let verses = all
-  if (ref.vStart != null) {
-    const end = ref.vEnd ?? ref.vStart
-    verses = all.filter((v) => v.verse >= ref.vStart! && v.verse <= end)
+  const controller = new AbortController()
+  const timeoutId = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+  try {
+    const res = await fetch(url, { signal: controller.signal })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const data = await res.json()
+    const all: Verse[] = (data.verses ?? []).map((v: { verse: number; text: string }) => ({
+      verse: v.verse,
+      text: (v.text ?? '').trim(),
+    }))
+    let verses = all
+    if (ref.vStart != null) {
+      const end = ref.vEnd ?? ref.vStart
+      verses = all.filter((v) => v.verse >= ref.vStart! && v.verse <= end)
+    }
+    if (verses.length === 0) verses = all.slice(0, 5) // 범위 매칭 실패 시 앞부분
+    return { translationName: data.translation ?? translation, verses }
+  } finally {
+    window.clearTimeout(timeoutId)
   }
-  if (verses.length === 0) verses = all.slice(0, 5) // 범위 매칭 실패 시 앞부분
-  return { translationName: data.translation ?? translation, verses }
 }
 
 // 외부 성경 사이트 링크(폴백/추가 번역)
