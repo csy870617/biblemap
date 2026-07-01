@@ -869,6 +869,198 @@ export const PILGRIMAGE: BibleMapTheme[] = [
   },
 ]
 
-// 지도 위 마커/카드 조회용 THEMES + KEY_PLACES + PILGRIMAGE 통합 목록. Timeline은 THEMES만
-// 사용해 핵심지명·성지순례가 연대표에 섞여 표시되지 않도록 분리합니다.
-export const ALL_THEMES: BibleMapTheme[] = [...THEMES, ...KEY_PLACES, ...PILGRIMAGE]
+// 대한민국 성지순례 — 업로드된 국내 순례 자료를 권역별(수도권/충청·강원/호남/영남/제주)로
+// 정리했습니다. 성경 시대 지도가 아닌 한국 교회사(순교지·초기 선교 유적) 자료라 PILGRIMAGE와
+// 분리했고, THEMES와도 분리된 배열이라 연대표(Timeline)에는 나타나지 않습니다.
+const KOREA_COLOR = '#831843'
+const KOREA_ICON = '🕊️'
+
+export const KOREA_SITES: BibleMapTheme[] = [
+  {
+    id: 'kr-myeongdong', title: '명동 주교좌성당 (서울 중구)', subtitle: '한국 가톨릭의 상징', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '근대 (1898년 완공)', year: 1898, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '한국 가톨릭교회의 상징이자 신앙의 중심지로, 수많은 순교자의 유해가 모셔진 곳입니다.',
+    locations: [{ id: 'kr-myeongdong', name: '명동 주교좌성당', nameEn: 'Myeongdong Cathedral', coord: [37.5633, 126.9873], refs: [], desc: '한국 가톨릭교회의 상징이자 신앙의 중심지로, 수많은 순교자의 유해가 모셔진 곳입니다.' }],
+  },
+  {
+    id: 'kr-jeoldusan', title: '절두산 순교성지 (서울 마포구)', subtitle: '병인박해의 비극', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '병인박해 (1866년)', year: 1866, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '병인박해 때 수많은 가톨릭 신자들이 참수형을 당한 비극과 순교의 현장입니다.',
+    locations: [{ id: 'kr-jeoldusan', name: '절두산 순교성지', nameEn: 'Jeoldusan Martyrs’ Shrine', coord: [37.5464, 126.9192], refs: [], desc: '병인박해 때 수많은 가톨릭 신자들이 참수형을 당한 비극과 순교의 현장입니다.' }],
+  },
+  {
+    id: 'kr-saenamteo', title: '새남터 순교성지 (서울 용산구)', subtitle: '김대건 신부 순교지', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '박해 시대 (1801~1866년)', year: 1846, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '주문모 신부, 김대건 신부 등 한국 교회의 핵심 성직자들과 평신도 지도자들이 순교한 거룩한 땅입니다.',
+    locations: [{ id: 'kr-saenamteo', name: '새남터 순교성지', nameEn: 'Saenamteo Martyrs’ Shrine', coord: [37.5308, 126.9611], refs: [], desc: '주문모 신부, 김대건 신부 등 한국 교회의 핵심 성직자들과 평신도 지도자들이 순교한 거룩한 땅입니다.' }],
+  },
+  {
+    id: 'kr-seosomun', title: '서소문밖 네거리 순교성지 (서울 중구)', subtitle: '최대 규모의 단일 순교지', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '박해 시대 (1801~1866년)', year: 1839, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '신유·기해·병인박해를 거치며 단일 순교지로는 가장 많은 성인과 복자를 배출한 역사적 장소입니다.',
+    locations: [{ id: 'kr-seosomun', name: '서소문밖 네거리 순교성지', nameEn: 'Seosomun Martyrs’ Shrine', coord: [37.5597, 126.9689], refs: [], desc: '신유·기해·병인박해를 거치며 단일 순교지로는 가장 많은 성인과 복자를 배출한 역사적 장소입니다.' }],
+  },
+  {
+    id: 'kr-yakhyeon', title: '중림동 약현성당 (서울 중구)', subtitle: '한국 최초의 서양식 벽돌 성당', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '근대 (1892년 건립)', year: 1892, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '1892년에 세워진 한국 최초의 서양식 벽돌조 성당으로, 서소문 순교자들을 기리기 위해 그 근처에 건립되었습니다.',
+    locations: [{ id: 'kr-yakhyeon', name: '중림동 약현성당', nameEn: 'Yakhyeon Cathedral', coord: [37.5598, 126.9663], refs: [], desc: '1892년에 세워진 한국 최초의 서양식 벽돌조 성당으로, 서소문 순교자들을 기리기 위해 그 근처에 건립되었습니다.' }],
+  },
+  {
+    id: 'kr-yanghwajin', title: '양화진 외국인선교사묘역 (서울 마포구)', subtitle: '선교사들의 영적 고향', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '개신교 선교 시대', year: 1890, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '언더우드, 아펜젤러 등 구한말 조선의 복음화와 근대화를 위해 목숨을 바친 개신교 선교사들과 그 가족들이 묻힌 영적 고향입니다.',
+    locations: [{ id: 'kr-yanghwajin', name: '양화진 외국인선교사묘역', nameEn: 'Yanghwajin Foreign Missionary Cemetery', coord: [37.5462, 126.9106], refs: [], desc: '언더우드, 아펜젤러 등 구한말 조선의 복음화와 근대화를 위해 목숨을 바친 개신교 선교사들과 그 가족들이 묻힌 영적 고향입니다.' }],
+  },
+  {
+    id: 'kr-jeongdong', title: '정동제일교회 (서울 중구)', subtitle: '개신교의 어머니 교회', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '개신교 초기 선교 시대 (1885년)', year: 1885, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '아펜젤러 선교사가 설립한 한국 최초의 개신교 예배당(개신교의 어머니 교회)으로 근대 건축의 가치를 지닙니다.',
+    locations: [{ id: 'kr-jeongdong', name: '정동제일교회', nameEn: 'Chungdong First Methodist Church', coord: [37.5658, 126.9736], refs: [], desc: '아펜젤러 선교사가 설립한 한국 최초의 개신교 예배당(개신교의 어머니 교회)으로 근대 건축의 가치를 지닙니다.' }],
+  },
+  {
+    id: 'kr-saemoonan', title: '새문안교회 (서울 종로구)', subtitle: '한국 최초의 장로교회', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '개신교 초기 선교 시대 (1887년)', year: 1887, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '1887년 언더우드 선교사가 설립한 한국 최초의 조직된 개신교 장로교회입니다.',
+    locations: [{ id: 'kr-saemoonan', name: '새문안교회', nameEn: 'Saemoonan Church', coord: [37.5745, 126.9707], refs: [], desc: '1887년 언더우드 선교사가 설립한 한국 최초의 조직된 개신교 장로교회입니다.' }],
+  },
+  {
+    id: 'kr-anglican-seoul', title: '대한성공회 서울주교좌성당 (서울 중구)', subtitle: '로마네스크 양식의 성공회 중심', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '근대 (1926년 완공)', year: 1926, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '로마네스크 양식의 아름다운 건축물로, 한국 성공회 선교의 중심이자 역사적 현장입니다.',
+    locations: [{ id: 'kr-anglican-seoul', name: '대한성공회 서울주교좌성당', nameEn: 'Anglican Cathedral of Seoul', coord: [37.5658, 126.9762], refs: [], desc: '로마네스크 양식의 아름다운 건축물로, 한국 성공회 선교의 중심이자 역사적 현장입니다.' }],
+  },
+  {
+    id: 'kr-ganghwa', title: '강화 교산교회 및 읍성성당 (인천 강화)', subtitle: '강화 복음화의 발상지', testament: 'NT', kind: 'region',
+    book: '1. 서울 및 수도권', era: '개신교 초기 선교 시대 (1893년)', year: 1893, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '강화도 최초의 개신교 교회인 교산교회와, 한국 전통 한옥 양식으로 지어진 독특한 강화성공회성당이 공존하는 강화 복음화의 발상지입니다.',
+    locations: [{ id: 'kr-ganghwa', name: '강화 교산교회 및 읍성성당', nameEn: 'Ganghwa Gyosan Church', coord: [37.7469, 126.4880], refs: [], desc: '강화도 최초의 개신교 교회인 교산교회와, 한국 전통 한옥 양식으로 지어진 독특한 강화성공회성당이 공존하는 강화 복음화의 발상지입니다.' }],
+  },
+  {
+    id: 'kr-solmoe', title: '솔뫼성지 (충남 당진)', subtitle: '한국의 베들레헴', testament: 'NT', kind: 'region',
+    book: '2. 충청 및 강원 권역', era: '조선 후기 (1821년, 김대건 신부 탄생)', year: 1821, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '한국 최초의 가톨릭 사제인 성 김대건 안드레아 신부의 생가터로, 한국의 베들레헴이라 불립니다.',
+    locations: [{ id: 'kr-solmoe', name: '솔뫼성지', nameEn: 'Solmoe Shrine', coord: [36.8994, 126.6398], refs: [], desc: '한국 최초의 가톨릭 사제인 성 김대건 안드레아 신부의 생가터로, 한국의 베들레헴이라 불립니다.' }],
+  },
+  {
+    id: 'kr-haemi', title: '해미읍성 및 순교성지 (충남 서산)', subtitle: '민초 신앙인들의 순교지', testament: 'NT', kind: 'region',
+    book: '2. 충청 및 강원 권역', era: '병인박해 (1866년)', year: 1866, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '신자들을 가두고 처형했던 자리로, 이름 없는 수많은 민초 신앙인들이 생매장되거나 처형당한 순교지입니다.',
+    locations: [{ id: 'kr-haemi', name: '해미읍성 및 순교성지', nameEn: 'Haemi Eupseong', coord: [36.7386, 126.4547], refs: [], desc: '신자들을 가두고 처형했던 자리로, 이름 없는 수많은 민초 신앙인들이 생매장되거나 처형당한 순교지입니다.' }],
+  },
+  {
+    id: 'kr-gongju-first', title: '공주 제일교회 (충남 공주)', subtitle: '충청도 최초의 개신교회', testament: 'NT', kind: 'region',
+    book: '2. 충청 및 강원 권역', era: '개신교 초기 선교 시대 (1897년경)', year: 1897, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '충청도 지역 최초의 개신교 교회로, 공주 지역 근대 문물의 발상지이자 민족 운동의 거점이었습니다.',
+    locations: [{ id: 'kr-gongju-first', name: '공주 제일교회', nameEn: 'Gongju First Church', coord: [36.4600, 127.1230], refs: [], desc: '충청도 지역 최초의 개신교 교회로, 공주 지역 근대 문물의 발상지이자 민족 운동의 거점이었습니다.' }],
+  },
+  {
+    id: 'kr-hwangsaebawi', title: '공주 황새바위 순교성지 (충남 공주)', subtitle: '목숨의 제단', testament: 'NT', kind: 'region',
+    book: '2. 충청 및 강원 권역', era: '박해 시대 (1801~1866년)', year: 1866, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '도보 이남 지역의 수많은 가톨릭 신자들이 공주 감영으로 압송되어 참수당한 목숨의 제단입니다.',
+    locations: [{ id: 'kr-hwangsaebawi', name: '공주 황새바위 순교성지', nameEn: 'Hwangsaebawi Martyrs’ Shrine', coord: [36.4525, 127.1197], refs: [], desc: '도보 이남 지역의 수많은 가톨릭 신자들이 공주 감영으로 압송되어 참수당한 목숨의 제단입니다.' }],
+  },
+  {
+    id: 'kr-baeron', title: '배론성지 (충북 제천)', subtitle: '박해기 신학교육의 산실', testament: 'NT', kind: 'region',
+    book: '2. 충청 및 강원 권역', era: '신유박해~박해기 (1801년~)', year: 1801, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '신학당이 세워졌던 곳이자, 황사영 백서가 작성된 토굴이 있으며, 최양업 신부의 묘소가 있는 가톨릭 박해기 교우촌의 핵심입니다.',
+    locations: [{ id: 'kr-baeron', name: '배론성지', nameEn: 'Baeron Shrine', coord: [37.0764, 128.1069], refs: [], desc: '신학당이 세워졌던 곳이자, 황사영 백서가 작성된 토굴이 있으며, 최양업 신부의 묘소가 있는 가톨릭 박해기 교우촌의 핵심입니다.' }],
+  },
+  {
+    id: 'kr-pungsuwon', title: '풍수원성당 (강원 횡성)', subtitle: '한국인 신부가 지은 첫 성당', testament: 'NT', kind: 'region',
+    book: '2. 충청 및 강원 권역', era: '박해 이후 교우촌 정착기 (1907년 건립)', year: 1907, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '신유박해 이후 가톨릭 신자들이 박해를 피해 정착해 교우촌을 형성하고, 한국인 신부에 의해 최초로 지어진 역사적 성당입니다.',
+    locations: [{ id: 'kr-pungsuwon', name: '풍수원성당', nameEn: 'Pungsu-won Catholic Church', coord: [37.5253, 127.9764], refs: [], desc: '신유박해 이후 가톨릭 신자들이 박해를 피해 정착해 교우촌을 형성하고, 한국인 신부에 의해 최초로 지어진 역사적 성당입니다.' }],
+  },
+  {
+    id: 'kr-jeondong', title: '전주 전동성당 (전북 전주)', subtitle: '한국 가톨릭 최초의 순교지', testament: 'NT', kind: 'region',
+    book: '3. 호남 권역', era: '신해박해 (1791년)', year: 1791, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '한국 가톨릭 최초의 순교자인 윤지충(바오로)과 권상연(야고보)이 순교한 자리에 세워진 호남의 대표적인 로마네스크 양식 성당입니다.',
+    locations: [{ id: 'kr-jeondong', name: '전주 전동성당', nameEn: 'Jeondong Cathedral', coord: [35.8125, 127.1531], refs: [], desc: '한국 가톨릭 최초의 순교자인 윤지충(바오로)과 권상연(야고보)이 순교한 자리에 세워진 호남의 대표적인 로마네스크 양식 성당입니다.' }],
+  },
+  {
+    id: 'kr-geumsan', title: '김제 금산교회 (전북 김제)', subtitle: '토착화된 한옥 예배당', testament: 'NT', kind: 'region',
+    book: '3. 호남 권역', era: '개신교 초기 선교 시대 (1905년경)', year: 1905, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: 'ㄱ자형 전통 한옥 구조가 그대로 보존된 개신교 예배당으로, 초기 선교부의 남녀 유별 및 토착화 과정을 보여주는 소중한 문화재입니다.',
+    locations: [{ id: 'kr-geumsan', name: '김제 금산교회', nameEn: 'Geumsan Church', coord: [35.7864, 126.9333], refs: [], desc: 'ㄱ자형 전통 한옥 구조가 그대로 보존된 개신교 예배당으로, 초기 선교부의 남녀 유별 및 토착화 과정을 보여주는 소중한 문화재입니다.' }],
+  },
+  {
+    id: 'kr-guam', title: '군산 구암교회 (전북 군산)', subtitle: '호남 3·1운동의 진원지', testament: 'NT', kind: 'region',
+    book: '3. 호남 권역', era: '일제강점기 (1919년, 3·1운동)', year: 1919, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '한강 이남 최초의 3·1 만세운동(군산 3·5 만세운동)을 주도했던 호남 선교와 민족운동의 상징적인 개신교 교회입니다.',
+    locations: [{ id: 'kr-guam', name: '군산 구암교회', nameEn: 'Guam Church', coord: [35.9776, 126.7369], refs: [], desc: '한강 이남 최초의 3·1 만세운동(군산 3·5 만세운동)을 주도했던 호남 선교와 민족운동의 상징적인 개신교 교회입니다.' }],
+  },
+  {
+    id: 'kr-yangdong', title: '목포 양동교회 (전남 목포)', subtitle: '유달산 돌로 지은 석조 예배당', testament: 'NT', kind: 'region',
+    book: '3. 호남 권역', era: '개신교 초기 선교 시대 (1897년)', year: 1897, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '유진 벨 선교사에 의해 시작된 목포 최초의 개신교 교회로, 교인들이 직접 유달산의 돌을 깨서 지은 석조 예배당이 그대로 남아 있습니다.',
+    locations: [{ id: 'kr-yangdong', name: '목포 양동교회', nameEn: 'Yangdong Church', coord: [34.7936, 126.3820], refs: [], desc: '유진 벨 선교사에 의해 시작된 목포 최초의 개신교 교회로, 교인들이 직접 유달산의 돌을 깨서 지은 석조 예배당이 그대로 남아 있습니다.' }],
+  },
+  {
+    id: 'kr-jeungdo', title: '신안 증도 문준경전도사순교기념관 (전남 신안)', subtitle: '섬 선교의 어머니', testament: 'NT', kind: 'region',
+    book: '3. 호남 권역', era: '한국전쟁 시기 (1950년)', year: 1950, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '‘섬 선교의 어머니’라 불리며 수많은 교회를 개척하고 6·25동란 당시 순교한 문준경 전도사의 발자취를 기리는 개신교 성지입니다.',
+    locations: [{ id: 'kr-jeungdo', name: '신안 증도 문준경전도사순교기념관', nameEn: 'Jeungdo Mun Jun-gyeong Memorial', coord: [34.9130, 126.1330], refs: [], desc: '‘섬 선교의 어머니’라 불리며 수많은 교회를 개척하고 6·25동란 당시 순교한 문준경 전도사의 발자취를 기리는 개신교 성지입니다.' }],
+  },
+  {
+    id: 'kr-aeyangwon', title: '여수 애양원 및 손양원목사유적지 (전남 여수)', subtitle: '사랑의 원자탄', testament: 'NT', kind: 'region',
+    book: '3. 호남 권역', era: '한국전쟁 시기 (1950년)', year: 1950, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '나환자들을 사랑으로 돌보고, 자신의 두 아들을 죽인 원수를 양아들로 삼아 ‘사랑의 원자탄’이라 불린 손양원 목사의 신앙과 순교를 기리는 개신교 유적지입니다.',
+    locations: [{ id: 'kr-aeyangwon', name: '여수 애양원 및 손양원목사유적지', nameEn: 'Aeyangwon & Rev. Son Yang-won Site', coord: [34.7420, 127.7350], refs: [], desc: '나환자들을 사랑으로 돌보고, 자신의 두 아들을 죽인 원수를 양아들로 삼아 ‘사랑의 원자탄’이라 불린 손양원 목사의 신앙과 순교를 기리는 개신교 유적지입니다.' }],
+  },
+  {
+    id: 'kr-cheongna', title: '대구 청라언덕 선교사주택 및 대구제일교회 (대구 중구)', subtitle: '대구 복음화의 요람', testament: 'NT', kind: 'region',
+    book: '4. 영남 권역', era: '개신교 초기 선교 시대 (1893년)', year: 1893, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '경북 지역 최초의 개신교 교회인 대구제일교회와 초기 선교사들이 거주했던 주택들이 모여 있는 대구 복음화의 요람입니다.',
+    locations: [{ id: 'kr-cheongna', name: '대구 청라언덕 및 대구제일교회', nameEn: 'Cheongna Hill & Daegu First Church', coord: [35.8730, 128.5960], refs: [], desc: '경북 지역 최초의 개신교 교회인 대구제일교회와 초기 선교사들이 거주했던 주택들이 모여 있는 대구 복음화의 요람입니다.' }],
+  },
+  {
+    id: 'kr-gyesan', title: '대구 계산주교좌성당 (대구 중구)', subtitle: '영남 가톨릭 선교의 모태', testament: 'NT', kind: 'region',
+    book: '4. 영남 권역', era: '근대 (1902년 고딕 성당 완공)', year: 1902, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '영남 지역에 최초로 세워진 고딕 양식의 가톨릭 성당으로, 영남권 가톨릭 선교의 모태입니다.',
+    locations: [{ id: 'kr-gyesan', name: '대구 계산주교좌성당', nameEn: 'Gyesan Cathedral', coord: [35.8703, 128.5935], refs: [], desc: '영남 지역에 최초로 세워진 고딕 양식의 가톨릭 성당으로, 영남권 가톨릭 선교의 모태입니다.' }],
+  },
+  {
+    id: 'kr-cheokgok', title: '안동 척곡교회 (경북 봉화)', subtitle: '영남 북부의 개신교 요람', testament: 'NT', kind: 'region',
+    book: '4. 영남 권역', era: '개신교 초기 선교 시대 (1907년 건립)', year: 1907, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '1907년에 지어진 한옥 장로교회로, 독립운동가 일문들이 신앙을 키우고 한글을 가르치던 영남 북부의 개신교 요람입니다.',
+    locations: [{ id: 'kr-cheokgok', name: '안동 척곡교회', nameEn: 'Cheokgok Church', coord: [36.8930, 128.9856], refs: [], desc: '1907년에 지어진 한옥 장로교회로, 독립운동가 일문들이 신앙을 키우고 한글을 가르치던 영남 북부의 개신교 요람입니다.' }],
+  },
+  {
+    id: 'kr-choryang', title: '부산 초량교회 (부산 동구)', subtitle: '신사참배 반대 운동의 중심', testament: 'NT', kind: 'region',
+    book: '4. 영남 권역', era: '개신교 초기 선교 시대 (1892년)', year: 1892, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '한강 이남에 최초로 세워진 장로교회(윌리엄 베어드 선교사 설립)이자 신사참배 반대 운동의 중심에 섰던 주기철 목사가 사역했던 개신교 성지입니다.',
+    locations: [{ id: 'kr-choryang', name: '부산 초량교회', nameEn: 'Choryang Church', coord: [35.1180, 129.0400], refs: [], desc: '한강 이남에 최초로 세워진 장로교회(윌리엄 베어드 선교사 설립)이자 신사참배 반대 운동의 중심에 섰던 주기철 목사가 사역했던 개신교 성지입니다.' }],
+  },
+  {
+    id: 'kr-ulleungdo', title: '울릉도 동산교회 및 이도형 영수 기념비 (경북 울릉)', subtitle: '눈물의 섬 선교', testament: 'NT', kind: 'region',
+    book: '4. 영남 권역', era: '개신교 초기 선교 시대 (1902년경)', year: 1902, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '척박한 울릉도 땅에 복음이 전해진 흔적과 초기 개신교 성도들이 믿음을 지킨 눈물의 유적입니다.',
+    locations: [{ id: 'kr-ulleungdo', name: '울릉도 동산교회', nameEn: 'Ulleungdo Dongsan Church', coord: [37.4849, 130.9057], refs: [], desc: '척박한 울릉도 땅에 복음이 전해진 흔적과 초기 개신교 성도들이 믿음을 지킨 눈물의 유적입니다.' }],
+  },
+  {
+    id: 'kr-yeocha-owoondae', title: '김해 여차마을(윤봉문 요셉 성지) 및 오륜대 (부산/경남)', subtitle: '영남 남부 박해기 교우촌', testament: 'NT', kind: 'region',
+    book: '4. 영남 권역', era: '박해 시대 교우촌 (19세기)', year: 1860, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '박해 시절 영남 남부 지역의 신앙 공동체 형성과 순교자들의 숨결이 깃든 가톨릭 사적지들입니다.',
+    locations: [
+      { id: 'kr-yeocha', name: '여차마을(윤봉문 요셉 성지)', nameEn: 'Yeocha Village', coord: [35.2280, 128.8894], refs: [], desc: '박해 시절 영남 남부 지역의 신앙 공동체 형성과 순교자들의 숨결이 깃든 가톨릭 사적지.' },
+      { id: 'kr-owoondae', name: '오륜대', nameEn: 'Owoondae', coord: [35.2350, 129.2130], refs: [], desc: '영남 지역 순교자들의 유해와 유물이 모셔진 한국순교자박물관이 있는 곳.' },
+    ],
+  },
+  {
+    id: 'kr-isidore', title: '제주 성이시돌목장 (제주 한림)', subtitle: '가난 극복을 위한 개척지', testament: 'NT', kind: 'region',
+    book: '5. 제주 권역', era: '현대 (1961년경 설립)', year: 1961, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '맥그린치 신부가 제주도민의 가난 극복과 자립을 위해 개척한 가톨릭 정착지이자 삼위일체 대성당, 새미은총의 동산 등이 모여 있는 영성 센터입니다.',
+    locations: [{ id: 'kr-isidore', name: '제주 성이시돌목장', nameEn: 'Isidore Ranch', coord: [33.4350, 126.2680], refs: [], desc: '맥그린치 신부가 제주도민의 가난 극복과 자립을 위해 개척한 가톨릭 정착지이자 삼위일체 대성당, 새미은총의 동산 등이 모여 있는 영성 센터입니다.' }],
+  },
+  {
+    id: 'kr-leekipoong', title: '제주 이기풍목사기념관 (제주 조천)', subtitle: '제주 복음화의 첫걸음', testament: 'NT', kind: 'region',
+    book: '5. 제주 권역', era: '개신교 초기 선교 시대 (1908년)', year: 1908, color: KOREA_COLOR, icon: KOREA_ICON,
+    summary: '평양대부흥운동 이후 한국 개신교 최초의 7인 목사 중 한 명이자 제주도 첫 선교사로 파송되어 제주 복음화에 평생을 바친 이기풍 목사를 기리는 기념관입니다.',
+    locations: [{ id: 'kr-leekipoong', name: '제주 이기풍목사기념관', nameEn: 'Rev. Lee Ki-poong Memorial', coord: [33.5350, 126.6350], refs: [], desc: '평양대부흥운동 이후 한국 개신교 최초의 7인 목사 중 한 명이자 제주도 첫 선교사로 파송되어 제주 복음화에 평생을 바친 이기풍 목사를 기리는 기념관입니다.' }],
+  },
+]
+
+// 지도 위 마커/카드 조회용 THEMES + KEY_PLACES + PILGRIMAGE + KOREA_SITES 통합 목록.
+// Timeline은 THEMES만 사용해 핵심지명·성지순례가 연대표에 섞여 표시되지 않도록 분리합니다.
+export const ALL_THEMES: BibleMapTheme[] = [...THEMES, ...KEY_PLACES, ...PILGRIMAGE, ...KOREA_SITES]
