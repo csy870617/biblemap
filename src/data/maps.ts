@@ -310,3 +310,214 @@ export const THEMES: BibleMapTheme[] = [
     ],
   },
 ]
+
+// 성경 핵심 지명 30선 — 사이드바의 별도 "핵심지명" 목록에서 개별적으로 켜고 끌 수 있도록,
+// 하나의 지명(또는 짝지어 설명되는 두 지명)을 각각 별도 테마로 등록했습니다.
+// THEMES와 분리된 배열이라 하단 연대표(Timeline)에는 나타나지 않습니다.
+const KEY_PLACE_COLOR = '#e11d48'
+const KEY_PLACE_ICON = '📍'
+
+export const KEY_PLACES: BibleMapTheme[] = [
+  {
+    id: 'key-ur', title: '갈대아 우르 (Ur of the Chaldeans)', subtitle: '유프라테스강 하구 (현 이라크)', testament: 'OT', kind: 'region',
+    book: 'I. 창세기~출애굽, 광야 시대', era: '족장 시대 (약 BC 2000년경)', year: -2000, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '아브라함이 믿음의 여정을 시작한 기점. 당시 최고로 발달한 문명 도시였음을 지도로 확인하면 그의 결단이 더 크게 다가옵니다.',
+    locations: [{ id: 'key-ur', name: '갈대아 우르', nameEn: 'Ur of the Chaldeans', modern: '이라크', coord: [30.9626, 46.1031], refs: [], desc: '아브라함이 믿음의 여정을 시작한 기점. 당시 최고로 발달한 문명 도시였음을 지도로 확인하면 그의 결단이 더 크게 다가옵니다.' }],
+  },
+  {
+    id: 'key-haran', title: '하란 (Haran)', subtitle: '유프라테스강 상류 (현 터키 남부)', testament: 'OT', kind: 'region',
+    book: 'I. 창세기~출애굽, 광야 시대', era: '족장 시대 (약 BC 2000년경)', year: -1990, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '아브라함이 가나안으로 가기 전 머물렀던 중간 기착지로, 고대 무역로의 핵심 요충지였습니다.',
+    locations: [{ id: 'key-haran', name: '하란', nameEn: 'Haran', modern: '터키 남부', coord: [36.8628, 39.0306], refs: [], desc: '아브라함이 가나안으로 가기 전 머물렀던 중간 기착지로, 고대 무역로의 핵심 요충지였습니다.' }],
+  },
+  {
+    id: 'key-shechem', title: '세겜 (Shechem)', subtitle: '중앙 산악지대의 허리', testament: 'OT', kind: 'region',
+    book: 'I. 창세기~출애굽, 광야 시대', era: '족장 시대', year: -1980, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '아브라함이 가나안에서 첫 제단을 쌓은 곳이자, 야곱의 우물, 요셉의 묘가 있는 곳으로 고대 남북 교통로의 중심입니다.',
+    locations: [{ id: 'key-shechem', name: '세겜', nameEn: 'Shechem', modern: '나블루스', coord: [32.2140, 35.2790], refs: [], desc: '아브라함이 가나안에서 첫 제단을 쌓은 곳이자, 야곱의 우물, 요셉의 묘가 있는 곳으로 고대 남북 교통로의 중심입니다.' }],
+  },
+  {
+    id: 'key-goshen', title: '고센 (Goshen)', subtitle: '이집트 나일강 삼각주 동북부', testament: 'OT', kind: 'region',
+    book: 'I. 창세기~출애굽, 광야 시대', era: '족장~출애굽 시대', year: -1700, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '이스라엘 백성이 430년간 정착했던 비옥한 땅으로, 출애굽의 시작점입니다.',
+    locations: [{ id: 'key-goshen', name: '고센', nameEn: 'Goshen', coord: [30.7300, 31.8000], refs: [], desc: '이스라엘 백성이 430년간 정착했던 비옥한 땅으로, 출애굽의 시작점입니다.' }],
+  },
+  {
+    id: 'key-sinai', title: '시내산 (Mount Sinai)', subtitle: '시나이반도 남부', testament: 'OT', kind: 'region',
+    book: 'I. 창세기~출애굽, 광야 시대', era: '출애굽 시대 (약 BC 1446년경)', year: -1446, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '모세가 율법을 받고 성막을 제작한 곳으로, 거친 광야 한복판에 고립된 지형적 엄숙함을 보여줍니다.',
+    locations: [{ id: 'key-sinai', name: '시내산', nameEn: 'Mount Sinai', modern: '제벨 무사', coord: [28.5392, 33.9756], refs: [], desc: '모세가 율법을 받고 성막을 제작한 곳으로, 거친 광야 한복판에 고립된 지형적 엄숙함을 보여줍니다.' }],
+  },
+  {
+    id: 'key-kadesh', title: '가데스 바네아 (Kadesh Barnea)', subtitle: '가나안 남쪽 국경 (신 광야)', testament: 'OT', kind: 'region',
+    book: 'I. 창세기~출애굽, 광야 시대', era: '광야 시대', year: -1440, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '12정탐꾼을 보낸 곳이자 38년 방황의 기준점으로, 가나안 땅과의 물리적 거리가 얼마나 가까웠는지 지도로 봐야 실감 납니다.',
+    locations: [{ id: 'key-kadesh', name: '가데스 바네아', nameEn: 'Kadesh Barnea', coord: [30.6906, 34.4983], refs: [], desc: '12정탐꾼을 보낸 곳이자 38년 방황의 기준점으로, 가나안 땅과의 물리적 거리가 얼마나 가까웠는지 지도로 봐야 실감 납니다.' }],
+  },
+  {
+    id: 'key-moab', title: '모압 평지 (Plains of Moab)', subtitle: '요단강 동쪽, 여리고 맞은편', testament: 'OT', kind: 'region',
+    book: 'I. 창세기~출애굽, 광야 시대', era: '광야 시대 말기', year: -1401, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '신명기가 선포된 장소이자 모세가 가나안을 바라보며 죽은 느보산이 있는 출애굽 여정의 최종 종착지입니다.',
+    locations: [{ id: 'key-moab', name: '모압 평지', nameEn: 'Plains of Moab', coord: [31.8300, 35.6300], refs: [], desc: '신명기가 선포된 장소이자 모세가 가나안을 바라보며 죽은 느보산이 있는 출애굽 여정의 최종 종착지입니다.' }],
+  },
+  {
+    id: 'key-jericho', title: '여리고 (Jericho)', subtitle: '요단 계곡 (해수면보다 약 250m 낮은 지형)', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '정복 시대 (약 BC 1400년경)', year: -1400, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '요단강을 건넌 이스라엘이 가나안 중부를 공략하기 위해 반드시 거쳐야 했던 관문입니다.',
+    locations: [{ id: 'key-jericho', name: '여리고', nameEn: 'Jericho', coord: [31.8607, 35.4444], refs: [], desc: '요단강을 건넌 이스라엘이 가나안 중부를 공략하기 위해 반드시 거쳐야 했던 관문입니다.' }],
+  },
+  {
+    id: 'key-ai-bethel', title: '아이 & 벧엘 (Ai & Bethel)', subtitle: '여리고 서쪽 산악지대', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '정복 시대', year: -1399, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '중부 산지 도로를 장악하기 위한 요충지로, 두 도시의 가까운 거리를 통해 패배와 승리의 반전이 시각화됩니다.',
+    locations: [
+      { id: 'key-ai', name: '아이', nameEn: 'Ai', coord: [31.9170, 35.2700], refs: [], desc: '중부 산지 도로를 장악하기 위한 요충지로, 두 도시의 가까운 거리를 통해 패배와 승리의 반전이 시각화됩니다.' },
+      { id: 'key-bethel-9', name: '벧엘', nameEn: 'Bethel', coord: [31.9308, 35.2206], refs: [], desc: '중부 산지 도로를 장악하기 위한 요충지로, 두 도시의 가까운 거리를 통해 패배와 승리의 반전이 시각화됩니다.' },
+    ],
+  },
+  {
+    id: 'key-gilgal', title: '길갈 (Gilgal)', subtitle: '요단강과 여리고 사이', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '정복 시대', year: -1400, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '가나안 정복 전쟁의 베이스캠프이자 할례와 유월절을 행한 영적 재정비의 장소입니다.',
+    locations: [{ id: 'key-gilgal', name: '길갈', nameEn: 'Gilgal', coord: [31.8700, 35.5600], refs: [], desc: '가나안 정복 전쟁의 베이스캠프이자 할례와 유월절을 행한 영적 재정비의 장소입니다.' }],
+  },
+  {
+    id: 'key-shiloh', title: '실로 (Shiloh)', subtitle: '에브라임 산지 중심부', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '사사 시대 초기', year: -1380, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '예루살렘 이전에 언약궤가 장기간 머물렀던 초기 이스라엘의 종교·정치적 중심지입니다.',
+    locations: [{ id: 'key-shiloh', name: '실로', nameEn: 'Shiloh', coord: [32.0550, 35.2890], refs: [], desc: '예루살렘 이전에 언약궤가 장기간 머물렀던 초기 이스라엘의 종교·정치적 중심지입니다.' }],
+  },
+  {
+    id: 'key-jezreel', title: '이스르엘 골짜기 (Jezreel Valley / 므깃도)', subtitle: '갈릴리 남쪽의 거대한 평야', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '사사~왕국 시대', year: -1100, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '해변길(Via Maris)이 지나는 사방이 열린 군사 요충지로, 기드온·사울·요시아 등의 주요 전쟁이 집중된 성경 최고의 전장입니다.',
+    locations: [{ id: 'key-jezreel', name: '이스르엘 골짜기', nameEn: 'Jezreel Valley / Megiddo', coord: [32.5844, 35.1841], refs: [], desc: '해변길(Via Maris)이 지나는 사방이 열린 군사 요충지로, 기드온·사울·요시아 등의 주요 전쟁이 집중된 성경 최고의 전장입니다.' }],
+  },
+  {
+    id: 'key-adullam-gath', title: '아둘람 & 가드 (Adullam & Gath)', subtitle: '유다 산지와 블레셋 평야의 경계 (셰펠라)', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '통일왕국 시대 초기', year: -1020, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '다윗이 사울을 피해 블레셋 영토(가드)와 국경 동굴(아둘람)을 넘나들던 아슬아슬한 도피 경로가 보입니다.',
+    locations: [
+      { id: 'key-adullam', name: '아둘람', nameEn: 'Adullam', coord: [31.6167, 34.9967], refs: [], desc: '다윗이 사울을 피해 블레셋 영토(가드)와 국경 동굴(아둘람)을 넘나들던 아슬아슬한 도피 경로가 보입니다.' },
+      { id: 'key-gath', name: '가드', nameEn: 'Gath', coord: [31.7000, 34.8500], refs: [], desc: '다윗이 사울을 피해 블레셋 영토(가드)와 국경 동굴(아둘람)을 넘나들던 아슬아슬한 도피 경로가 보입니다.' },
+    ],
+  },
+  {
+    id: 'key-hebron', title: '헤브론 (Hebron)', subtitle: '예루살렘 남쪽 약 30km (유다 산지 최고 고도)', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '통일왕국 시대', year: -1010, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '막벨라 굴(족장들의 매장지)이 있으며, 다윗이 예루살렘 이전 7년 반 동안 유다를 다스린 첫 수도입니다.',
+    locations: [{ id: 'key-hebron', name: '헤브론', nameEn: 'Hebron', coord: [31.5326, 35.0998], refs: [], desc: '막벨라 굴(족장들의 매장지)이 있으며, 다윗이 예루살렘 이전 7년 반 동안 유다를 다스린 첫 수도입니다.' }],
+  },
+  {
+    id: 'key-jerusalem', title: '예루살렘 (Jerusalem)', subtitle: '유다와 베냐민 경계의 천혜의 요새', testament: 'OT', kind: 'region',
+    book: 'II. 정복~통일 왕국 시대', era: '통일왕국 시대', year: -1000, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '다윗이 정복해 수도로 삼고 솔로몬이 성전을 건축한, 성경 구속사의 영원한 중심지입니다.',
+    locations: [{ id: 'key-jerusalem', name: '예루살렘', nameEn: 'Jerusalem', coord: [31.7683, 35.2137], refs: [], desc: '다윗이 정복해 수도로 삼고 솔로몬이 성전을 건축한, 성경 구속사의 영원한 중심지입니다.' }],
+  },
+  {
+    id: 'key-dan-bethel', title: '단 & 벧엘 (Dan & Bethel)', subtitle: '북이스라엘의 최북단(단)과 최남단(벧엘)', testament: 'OT', kind: 'region',
+    book: 'III. 분열 왕국 ~ 포로 시대', era: '분열왕국 시대 (약 BC 930년경)', year: -930, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '여로보암 1세가 예루살렘으로 가는 남유다의 통로를 막기 위해 금송아지 신전을 세운 경계 도시들입니다.',
+    locations: [
+      { id: 'key-dan-16', name: '단', nameEn: 'Dan', coord: [33.2486, 35.6528], refs: [], desc: '여로보암 1세가 예루살렘으로 가는 남유다의 통로를 막기 위해 금송아지 신전을 세운 경계 도시들입니다.' },
+      { id: 'key-bethel-16', name: '벧엘', nameEn: 'Bethel', coord: [31.9308, 35.2206], refs: [], desc: '여로보암 1세가 예루살렘으로 가는 남유다의 통로를 막기 위해 금송아지 신전을 세운 경계 도시들입니다.' },
+    ],
+  },
+  {
+    id: 'key-samaria', title: '사마리아 (Samaria)', subtitle: '북이스라엘의 세 번째 수도', testament: 'OT', kind: 'region',
+    book: 'III. 분열 왕국 ~ 포로 시대', era: '분열왕국 시대', year: -880, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '사방이 평지로 둘러싸인 독특한 구릉 지형으로, 오므리 왕조가 국방과 교역을 위해 선택한 요새입니다.',
+    locations: [{ id: 'key-samaria', name: '사마리아', nameEn: 'Samaria', coord: [32.2806, 35.1900], refs: [], desc: '사방이 평지로 둘러싸인 독특한 구릉 지형으로, 오므리 왕조가 국방과 교역을 위해 선택한 요새입니다.' }],
+  },
+  {
+    id: 'key-tishbe-cherith', title: '디셉 & 그릿 시냇가 (Tishbe & Cherith Brook)', subtitle: '요단 동쪽 길르앗 지역', testament: 'OT', kind: 'region',
+    book: 'III. 분열 왕국 ~ 포로 시대', era: '분열왕국 시대', year: -860, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '엘리야 선지자의 고향과 숨어 지내던 곳으로, 척박하고 험준한 지형이 선지자의 사역과 어우러집니다.',
+    locations: [
+      { id: 'key-tishbe', name: '디셉', nameEn: 'Tishbe', coord: [32.3800, 35.6200], refs: [], desc: '엘리야 선지자의 고향과 숨어 지내던 곳으로, 척박하고 험준한 지형이 선지자의 사역과 어우러집니다.' },
+      { id: 'key-cherith', name: '그릿 시냇가', nameEn: 'Cherith Brook', coord: [32.4000, 35.6400], refs: [], desc: '엘리야 선지자의 고향과 숨어 지내던 곳으로, 척박하고 험준한 지형이 선지자의 사역과 어우러집니다.' },
+    ],
+  },
+  {
+    id: 'key-carmel', title: '갈멜산 (Mount Carmel)', subtitle: '지중해로 돌출한 산맥', testament: 'OT', kind: 'region',
+    book: 'III. 분열 왕국 ~ 포로 시대', era: '분열왕국 시대', year: -850, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '북이스라엘과 바알을 섬기던 페니키아의 접경지대로, 엘리야가 바알 선지자들과 대결한 종교적 격전지입니다.',
+    locations: [{ id: 'key-carmel', name: '갈멜산', nameEn: 'Mount Carmel', coord: [32.7259, 34.9707], refs: [], desc: '북이스라엘과 바알을 섬기던 페니키아의 접경지대로, 엘리야가 바알 선지자들과 대결한 종교적 격전지입니다.' }],
+  },
+  {
+    id: 'key-lachish', title: '라기스 (Lachish)', subtitle: '예루살렘 남서쪽 (셰펠라의 핵심 요새)', testament: 'OT', kind: 'region',
+    book: 'III. 분열 왕국 ~ 포로 시대', era: '분열왕국 말기', year: -701, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '예루살렘을 지키는 최후의 보루로, 앗수르와 바벨론의 유다 침공 경로에서 항상 먼저 함락당한 방어기지입니다.',
+    locations: [{ id: 'key-lachish', name: '라기스', nameEn: 'Lachish', coord: [31.5650, 34.8490], refs: [], desc: '예루살렘을 지키는 최후의 보루로, 앗수르와 바벨론의 유다 침공 경로에서 항상 먼저 함락당한 방어기지입니다.' }],
+  },
+  {
+    id: 'key-kebar', title: '그발 강가 (Kebar River)', subtitle: '바벨론 니푸르 근처의 대운하', testament: 'OT', kind: 'region',
+    book: 'III. 분열 왕국 ~ 포로 시대', era: '포로 시대 (약 BC 586년경)', year: -593, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '포로로 잡혀간 에스겔이 환상을 본 곳으로, 예루살렘과의 지리적 단절과 절망을 보여주는 장소입니다.',
+    locations: [{ id: 'key-kebar', name: '그발 강가', nameEn: 'Kebar River', coord: [32.1300, 45.1900], refs: [], desc: '포로로 잡혀간 에스겔이 환상을 본 곳으로, 예루살렘과의 지리적 단절과 절망을 보여주는 장소입니다.' }],
+  },
+  {
+    id: 'key-nazareth', title: '나사렛 (Nazareth)', subtitle: '갈릴리 남부 산지 마을', testament: 'NT', kind: 'region',
+    book: 'IV. 예수님의 생애와 사역', era: '예수님 생애 (약 BC 4~AD 30년경)', year: -4, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '예루살렘 중심부와 멀리 떨어진 변두리 지형을 보면 "나사렛에서 무슨 선한 것이 나겠느냐"라는 말의 뉘앙스가 이해됩니다.',
+    locations: [{ id: 'key-nazareth', name: '나사렛', nameEn: 'Nazareth', coord: [32.7019, 35.2978], refs: [], desc: '예루살렘 중심부와 멀리 떨어진 변두리 지형을 보면 "나사렛에서 무슨 선한 것이 나겠느냐"라는 말의 뉘앙스가 이해됩니다.' }],
+  },
+  {
+    id: 'key-capernaum', title: '가버나움 (Capernaum)', subtitle: '갈릴리 바다 북서쪽 해안', testament: 'NT', kind: 'region',
+    book: 'IV. 예수님의 생애와 사역', era: '예수님 생애', year: 28, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '예수님 갈릴리 사역의 본거지이자, 세관이 있을 정도로 당시 국제 도로(해변길)가 관통하던 활발한 무역 도시였습니다.',
+    locations: [{ id: 'key-capernaum', name: '가버나움', nameEn: 'Capernaum', coord: [32.8807, 35.5750], refs: [], desc: '예수님 갈릴리 사역의 본거지이자, 세관이 있을 정도로 당시 국제 도로(해변길)가 관통하던 활발한 무역 도시였습니다.' }],
+  },
+  {
+    id: 'key-caesarea-philippi', title: '가이사랴 빌립보 (Caesarea Philippi)', subtitle: '헐몬산 기슭 최북단', testament: 'NT', kind: 'region',
+    book: 'IV. 예수님의 생애와 사역', era: '예수님 생애', year: 29, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '거대한 바위산과 로마 황제·판(Pan) 신전이 가득했던 이방 종교의 중심지에서 베드로가 신앙 고백을 한 시각적 대비가 일품입니다.',
+    locations: [{ id: 'key-caesarea-philippi', name: '가이사랴 빌립보', nameEn: 'Caesarea Philippi', coord: [33.2486, 35.6944], refs: [], desc: '거대한 바위산과 로마 황제·판(Pan) 신전이 가득했던 이방 종교의 중심지에서 베드로가 신앙 고백을 한 시각적 대비가 일품입니다.' }],
+  },
+  {
+    id: 'key-jericho-road', title: '여리고에서 예루살렘으로 올라가는 길', subtitle: '유대 광야 길 (거리 약 20여 km)', testament: 'NT', kind: 'journey',
+    book: 'IV. 예수님의 생애와 사역', era: '예수님 생애', year: 30, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '해수면 아래 250m(여리고)에서 해발 750m(예루살렘)까지 단숨에 고도를 치고 올라가는 험준한 길로, 선한 사마리아인 비유의 배경입니다.',
+    locations: [
+      { id: 'key-jericho-road-start', name: '여리고', nameEn: 'Jericho', coord: [31.8607, 35.4444], refs: [], desc: '해수면 아래 250m(여리고)에서 해발 750m(예루살렘)까지 단숨에 고도를 치고 올라가는 험준한 길로, 선한 사마리아인 비유의 배경입니다.' },
+      { id: 'key-jericho-road-end', name: '예루살렘', nameEn: 'Jerusalem', coord: [31.7683, 35.2137], refs: [], desc: '해수면 아래 250m(여리고)에서 해발 750m(예루살렘)까지 단숨에 고도를 치고 올라가는 험준한 길로, 선한 사마리아인 비유의 배경입니다.' },
+    ],
+  },
+  {
+    id: 'key-olivet-gethsemane', title: '감람산 & 겟세마네 (Mount of Olives & Gethsemane)', subtitle: '예루살렘 동쪽, 기드론 골짜기 건너편', testament: 'NT', kind: 'region',
+    book: 'IV. 예수님의 생애와 사역', era: '예수님 생애', year: 30, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '예루살렘 성전을 한눈에 내려다볼 수 있는 고도로, 예수님이 성을 보며 우시던 장소이자 최후의 기도를 하신 곳입니다.',
+    locations: [
+      { id: 'key-olivet', name: '감람산', nameEn: 'Mount of Olives', coord: [31.7823, 35.2411], refs: [], desc: '예루살렘 성전을 한눈에 내려다볼 수 있는 고도로, 예수님이 성을 보며 우시던 장소이자 최후의 기도를 하신 곳입니다.' },
+      { id: 'key-gethsemane', name: '겟세마네', nameEn: 'Gethsemane', coord: [31.7791, 35.2389], refs: [], desc: '예루살렘 성전을 한눈에 내려다볼 수 있는 고도로, 예수님이 성을 보며 우시던 장소이자 최후의 기도를 하신 곳입니다.' },
+    ],
+  },
+  {
+    id: 'key-caesarea-maritima', title: '가이사랴 (Caesarea Maritima)', subtitle: '유대 지방의 지중해 인공 항구 도시', testament: 'NT', kind: 'region',
+    book: 'V. 사도행전 & 초대 교회', era: '초대교회 시대 (약 AD 35~60년경)', year: 44, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '로마 총독부가 있던 곳으로, 고넬료의 개종 및 바울이 로마로 압송된 세계 선교의 바닷길 관문입니다.',
+    locations: [{ id: 'key-caesarea-maritima', name: '가이사랴', nameEn: 'Caesarea Maritima', coord: [32.5000, 34.8900], refs: [], desc: '로마 총독부가 있던 곳으로, 고넬료의 개종 및 바울이 로마로 압송된 세계 선교의 바닷길 관문입니다.' }],
+  },
+  {
+    id: 'key-damascus', title: '다메섹 (Damascus)', subtitle: '현 시리아 수도', testament: 'NT', kind: 'region',
+    book: 'V. 사도행전 & 초대 교회', era: '초대교회 시대', year: 34, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '예루살렘에서 북쪽으로 약 240km 떨어진 고대 도시로, 사울이 이 먼 거리까지 믿는 자들을 잡으러 가다가 회심한 열정의 거리를 보여줍니다.',
+    locations: [{ id: 'key-damascus', name: '다메섹', nameEn: 'Damascus', modern: '시리아', coord: [33.5138, 36.2765], refs: [], desc: '예루살렘에서 북쪽으로 약 240km 떨어진 고대 도시로, 사울이 이 먼 거리까지 믿는 자들을 잡으러 가다가 회심한 열정의 거리를 보여줍니다.' }],
+  },
+  {
+    id: 'key-antioch', title: '수리아 안디옥 (Antioch in Syria)', subtitle: '로마 제국 제3의 대도시 (현 터키 안타키아)', testament: 'NT', kind: 'region',
+    book: 'V. 사도행전 & 초대 교회', era: '초대교회 시대', year: 47, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '이방인 선교의 전초기지가 된 바울 1, 2, 3차 전도여행의 출발점입니다.',
+    locations: [{ id: 'key-antioch', name: '수리아 안디옥', nameEn: 'Antioch in Syria', modern: '터키 안타키아', coord: [36.2021, 36.1604], refs: [], desc: '이방인 선교의 전초기지가 된 바울 1, 2, 3차 전도여행의 출발점입니다.' }],
+  },
+  {
+    id: 'key-ephesus', title: '에베소 (Ephesus)', subtitle: '소아시아 서해안 (현 터키)', testament: 'NT', kind: 'region',
+    book: 'V. 사도행전 & 초대 교회', era: '초대교회 시대', year: 54, color: KEY_PLACE_COLOR, icon: KEY_PLACE_ICON,
+    summary: '아데미 신전이 있던 곳으로, 바울이 3년간 머물며 두란노 서원을 통해 소아시아 전역에 복음을 퍼뜨린 전략적 거점입니다.',
+    locations: [{ id: 'key-ephesus', name: '에베소', nameEn: 'Ephesus', modern: '터키', coord: [37.9410, 27.3400], refs: [], desc: '아데미 신전이 있던 곳으로, 바울이 3년간 머물며 두란노 서원을 통해 소아시아 전역에 복음을 퍼뜨린 전략적 거점입니다.' }],
+  },
+]
+
+// 지도 위 마커/카드 조회용 THEMES + KEY_PLACES 통합 목록. Timeline은 THEMES만 사용해
+// 핵심지명이 연대표에 섞여 표시되지 않도록 분리합니다.
+export const ALL_THEMES: BibleMapTheme[] = [...THEMES, ...KEY_PLACES]

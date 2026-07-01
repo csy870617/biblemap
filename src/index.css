@@ -131,6 +131,29 @@ button {
   padding: 12px 20px 6px;
 }
 
+.section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--muted);
+  padding: 12px 20px 6px;
+  cursor: pointer;
+}
+.section-toggle:hover {
+  color: var(--text);
+}
+.section-toggle .chevron {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
 /* 목록 최상단, ＋ 버튼이 중복 선택(비교) 용도임을 알려주는 라벨 */
 .compare-hint {
   display: flex;

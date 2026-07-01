@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar'
 import DetailPanel from './components/DetailPanel'
 import Timeline from './components/Timeline'
 import VersePanel from './components/VersePanel'
-import { THEMES } from './data/maps'
+import { ALL_THEMES } from './data/maps'
 
 export default function App() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -18,8 +18,8 @@ export default function App() {
   const lastTsRef = useRef<number>(0)
   const endTimeoutRef = useRef<number | null>(null)
 
-  const themes = selectedIds.map((id) => THEMES.find((t) => t.id === id)!).filter(Boolean)
-  const active = THEMES.find((t) => t.id === activeId) ?? null
+  const themes = selectedIds.map((id) => ALL_THEMES.find((t) => t.id === id)!).filter(Boolean)
+  const active = ALL_THEMES.find((t) => t.id === activeId) ?? null
 
   const stopPlay = useCallback(() => {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
