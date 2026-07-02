@@ -151,7 +151,7 @@ function MapController({
     const span = Math.max(bounds.getNorth() - bounds.getSouth(), bounds.getEast() - bounds.getWest())
     suppressUserZoomRef.current = true
     if (span < 0.6) {
-      const targetZoom = userZoomedRef.current ? map.getZoom() : 11
+      const targetZoom = userZoomedRef.current ? map.getZoom() : 15
       map.flyTo(bounds.getCenter(), targetZoom, { duration: 0.8 })
     } else {
       map.fitBounds(bounds, { padding: [60, 60], maxZoom: 8 })
