@@ -34,11 +34,17 @@ function pinIcon(num: number, color: string, dim: boolean) {
   })
 }
 
-// 라벨 마커(region)
-function labelIcon(name: string, color: string, dim: boolean) {
+// 라벨 마커(region). 지도를 확대/축소할 때 배지도 함께 커지고 작아지도록,
+// 기준 줌(REGION_LABEL_BASE_ZOOM)을 1배로 두고 그로부터 벗어난 만큼 scale()로 키우거나 줄입니다.
+const REGION_LABEL_BASE_ZOOM = 13
+function regionLabelScale(zoom: number) {
+  return Math.min(1.8, Math.max(0.55, 1.12 ** (zoom - REGION_LABEL_BASE_ZOOM)))
+}
+function labelIcon(name: string, color: string, dim: boolean, zoom: number) {
+  const scale = regionLabelScale(zoom)
   return L.divIcon({
     className: '',
-    html: `<div class="region-label${dim ? ' dim' : ''}" style="border-color:${color}"><i style="background:${color}"></i>${name}</div>`,
+    html: `<div class="region-label${dim ? ' dim' : ''}" style="border-color:${color};--rl-scale:${scale}"><i style="background:${color}"></i>${name}</div>`,
     iconSize: [10, 10],
     iconAnchor: [5, 5],
     popupAnchor: [0, -8],
@@ -202,6 +208,13 @@ function ThemeLayer({
   )
   const visibleCount = isActive && playPos !== null ? Math.floor(playPos) + 1 : theme.locations.length
 
+  // 위치 이름 배지(.region-label) 크기를 줌 레벨에 맞춰 갱신. zoomend에서만 갱신해
+  // 확대/축소 애니메이션 중 매 프레임 리렌더되지 않도록 합니다(전환 중 커지는 느낌은
+  // Leaflet이 지도판 자체를 CSS로 확대/축소하는 기본 동작으로 이미 표현됩니다).
+  const map = useMap()
+  const [zoom, setZoom] = useState(map.getZoom())
+  useMapEvent('zoomend', () => setZoom(map.getZoom()))
+
   return (
     <>
       {theme.kind === 'journey' && (
@@ -229,7 +242,7 @@ function ThemeLayer({
           position={loc.coord}
           icon={
             theme.kind === 'region'
-              ? labelIcon(loc.name, theme.color, dim)
+              ? labelIcon(loc.name, theme.color, dim, zoom)
               : pinIcon(idx + 1, theme.color, dim || idx >= visibleCount)
           }
           eventHandlers={{
