@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { MapContainer, TileLayer, Marker, Polyline, Popup, ZoomControl, useMap, useMapEvent } from 'react-leaflet'
 import L from 'leaflet'
 import type { BibleMapTheme, LngLat } from '../data/maps'
@@ -117,20 +117,46 @@ function MapController({
   const boundsKey = themes.map((t) => t.id).join(',')
   const active = themes.find((t) => t.id === activeId) ?? null
 
+  // 아래 두 ref로 "사용자가 직접 확대/축소한 적이 있는가"를 추적합니다.
+  // - suppressUserZoomRef: 우리가 프로그램적으로 flyTo/fitBounds를 실행하는 동안 발생하는
+  //   zoomend를 사용자가 직접 조작한 것으로 착각하지 않도록 억제합니다.
+  // - userZoomedRef: 한 번이라도 사용자가 직접 확대/축소했다면 true가 되고, 그 이후로는
+  //   핵심지명·성지순례·한국 성지순례를 선택해도 고정 줌으로 되돌리지 않고 사용자가
+  //   맞춰둔 줌을 그대로 유지한 채 위치만 이동합니다.
+  const suppressUserZoomRef = useRef(false)
+  const userZoomedRef = useRef(false)
+
+  useMapEvent('zoomend', () => {
+    if (!suppressUserZoomRef.current) userZoomedRef.current = true
+  })
+
   // 표시 테마 집합이 바뀌면 전체가 보이도록 맞춤
   useEffect(() => {
     if (themes.length === 0) return
     const pts = themes.flatMap((t) => t.locations.map((l) => l.coord))
     const bounds = L.latLngBounds(pts)
+    // 위 프로그램적 이동이 끝나면(moveend) 사용자 확대/축소 감지를 다시 켭니다. setTimeout으로
+    // 한 틱 미루는 이유는, 같은 zoomend 이벤트 디스패치 안에서 이 리셋이 먼저 실행돼 버리면
+    // 위 useMapEvent 핸들러가 우리 자신의 이동을 "사용자 조작"으로 오인할 수 있기 때문입니다.
+    const releaseSuppressionAfterMove = () => {
+      map.once('moveend', () => {
+        setTimeout(() => {
+          suppressUserZoomRef.current = false
+        }, 0)
+      })
+    }
     // 지점들이 서로 아주 가까우면(핵심지명·성지순례처럼 1~4곳뿐인 경우) fitBounds가 최대 줌까지
-    // 확대해 버려 주변 지도를 함께 보기 어려우므로, 이때는 줌을 바꾸지 않고 보고 있던
-    // 축척 그대로 그 위치로 이동합니다.
+    // 확대해 버려 주변 지도를 함께 보기 어려우므로, 적당한 고정 줌으로 이동합니다.
+    // 단, 사용자가 이미 직접 확대/축소를 조작한 적이 있다면 그 축척을 그대로 유지합니다.
     const span = Math.max(bounds.getNorth() - bounds.getSouth(), bounds.getEast() - bounds.getWest())
+    suppressUserZoomRef.current = true
     if (span < 0.6) {
-      map.flyTo(bounds.getCenter(), map.getZoom(), { duration: 0.8 })
+      const targetZoom = userZoomedRef.current ? map.getZoom() : 7
+      map.flyTo(bounds.getCenter(), targetZoom, { duration: 0.8 })
     } else {
       map.fitBounds(bounds, { padding: [60, 60], maxZoom: 8 })
     }
+    releaseSuppressionAfterMove()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boundsKey, map])
 
