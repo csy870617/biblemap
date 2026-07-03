@@ -136,10 +136,43 @@ function MapController({
     if (!suppressUserZoomRef.current) userZoomedRef.current = true
   })
 
+  // 위 zoomend 감지는 우리 자신의 flyTo/fitBounds 애니메이션이 진행되는 동안(약 0.8초) 억제되는데,
+  // 만약 그 짧은 창 안에 사용자가 실제로 휠/핀치/더블클릭/줌 버튼으로 확대·축소하면 그 조작이
+  // 감지되지 않고 누락되는 경합(race)이 있었습니다. 이런 제스처는 우리 코드가 절대 발생시키지
+  // 않으므로, 억제 여부와 무관하게 항상 "사용자가 직접 조작했다"로 기록해 이 경합을 막습니다.
+  useEffect(() => {
+    const container = map.getContainer()
+    const markUserZoomed = () => {
+      userZoomedRef.current = true
+    }
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length >= 2) markUserZoomed() // 핀치 줌 제스처 시작
+    }
+    const onClick = (e: MouseEvent) => {
+      const target = e.target
+      if (target instanceof Element && target.closest('.leaflet-control-zoom-in, .leaflet-control-zoom-out')) {
+        markUserZoomed()
+      }
+    }
+    container.addEventListener('wheel', markUserZoomed, { passive: true })
+    container.addEventListener('dblclick', markUserZoomed)
+    container.addEventListener('touchstart', onTouchStart, { passive: true })
+    // 줌 버튼(L.Control.Zoom)은 지도 클릭과 겹치지 않도록 자체적으로 클릭 버블링을 막으므로,
+    // 버블 단계에서는 이 클릭을 받을 수 없습니다. capture 단계에서 먼저 가로챕니다.
+    container.addEventListener('click', onClick, { capture: true })
+    return () => {
+      container.removeEventListener('wheel', markUserZoomed)
+      container.removeEventListener('dblclick', markUserZoomed)
+      container.removeEventListener('touchstart', onTouchStart)
+      container.removeEventListener('click', onClick, { capture: true })
+    }
+  }, [map])
+
   // 표시 테마 집합이 바뀌면 전체가 보이도록 맞춤
   useEffect(() => {
     if (themes.length === 0) return
     const pts = themes.flatMap((t) => t.locations.map((l) => l.coord))
+    if (pts.length === 0) return // 위치가 없는 테마만 표시된 경우 fitBounds가 예외를 던지므로 방어
     const bounds = L.latLngBounds(pts)
     // 위 프로그램적 이동이 끝나면(moveend) 사용자 확대/축소 감지를 다시 켭니다. setTimeout으로
     // 한 틱 미루는 이유는, 같은 zoomend 이벤트 디스패치 안에서 이 리셋이 먼저 실행돼 버리면
@@ -215,6 +248,28 @@ function ThemeLayer({
   const [zoom, setZoom] = useState(map.getZoom())
   useMapEvent('zoomend', () => setZoom(map.getZoom()))
 
+  // 재생(playPos)은 초당 수십 번 갱신되어 이 컴포넌트를 매 프레임 리렌더시킵니다.
+  // 아이콘/클릭 핸들러를 매번 새로 만들면(재생 중이 아닌 테마까지 포함) Leaflet이 매 프레임
+  // 마커 DOM을 다시 그리고 클릭 리스너를 재바인딩하게 되므로, playPos에 실제로 의존하지
+  // 않는 값들은 따로 메모이즈해 재생 중에도 참조가 바뀌지 않도록 합니다.
+  const baseIcons = useMemo(
+    () =>
+      theme.locations.map((loc, idx) =>
+        theme.kind === 'region' ? labelIcon(loc.name, theme.color, dim, zoom) : pinIcon(idx + 1, theme.color, dim),
+      ),
+    [theme.id, theme.kind, theme.color, dim, zoom],
+  )
+  const eventHandlersList = useMemo(
+    () =>
+      theme.locations.map((loc) => ({
+        click: () => {
+          if (isActive) onSelectLoc(loc.id)
+          else onSelectTheme(theme.id)
+        },
+      })),
+    [theme.id, isActive, onSelectLoc, onSelectTheme],
+  )
+
   return (
     <>
       {theme.kind === 'journey' && (
@@ -241,16 +296,13 @@ function ThemeLayer({
           key={`${theme.id}:${loc.id}`}
           position={loc.coord}
           icon={
-            theme.kind === 'region'
-              ? labelIcon(loc.name, theme.color, dim, zoom)
-              : pinIcon(idx + 1, theme.color, dim || idx >= visibleCount)
+            // 재생 중인 활성 여정만 핀을 순서대로 드러내는 애니메이션이 필요하므로 그 경우에만
+            // 매 프레임 새로 계산하고, 그 외에는 메모이즈된 아이콘을 그대로 재사용합니다.
+            isActive && theme.kind === 'journey' && playPos !== null
+              ? pinIcon(idx + 1, theme.color, dim || idx >= visibleCount)
+              : baseIcons[idx]
           }
-          eventHandlers={{
-            click: () => {
-              if (isActive) onSelectLoc(loc.id)
-              else onSelectTheme(theme.id)
-            },
-          }}
+          eventHandlers={eventHandlersList[idx]}
         >
           <Popup maxWidth={240}>
             <b>

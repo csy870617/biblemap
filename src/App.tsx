@@ -4,7 +4,7 @@ import Sidebar from './components/Sidebar'
 import DetailPanel from './components/DetailPanel'
 import Timeline from './components/Timeline'
 import VersePanel from './components/VersePanel'
-import { ALL_THEMES } from './data/maps'
+import { ALL_THEMES, type BibleMapTheme } from './data/maps'
 
 export default function App() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -18,7 +18,9 @@ export default function App() {
   const lastTsRef = useRef<number>(0)
   const endTimeoutRef = useRef<number | null>(null)
 
-  const themes = selectedIds.map((id) => ALL_THEMES.find((t) => t.id === id)!).filter(Boolean)
+  const themes = selectedIds
+    .map((id) => ALL_THEMES.find((t) => t.id === id))
+    .filter((t): t is BibleMapTheme => t !== undefined)
   const active = ALL_THEMES.find((t) => t.id === activeId) ?? null
 
   const stopPlay = useCallback(() => {
@@ -63,18 +65,26 @@ export default function App() {
     }
   }
 
-  const selectLoc = (id: string) => {
-    stopPlay()
-    setSelectedLocId(id)
-  }
+  // MapView에 그대로 전달되어 지도 마커의 클릭 핸들러 메모이제이션 근거가 되므로,
+  // 재생 중(playPos가 매 프레임 바뀔 때)에도 참조가 바뀌지 않도록 useCallback으로 고정합니다.
+  const selectLoc = useCallback(
+    (id: string) => {
+      stopPlay()
+      setSelectedLocId(id)
+    },
+    [stopPlay],
+  )
 
   // 비교 중 특정 테마를 활성으로 전환(지도 마커 클릭 등)
-  const activateTheme = (id: string) => {
-    stopPlay()
-    setActiveId(id)
-    setSelectedLocId(null)
-    setSidebarView('detail')
-  }
+  const activateTheme = useCallback(
+    (id: string) => {
+      stopPlay()
+      setActiveId(id)
+      setSelectedLocId(null)
+      setSidebarView('detail')
+    },
+    [stopPlay],
+  )
 
   const play = useCallback(() => {
     if (!active || active.kind !== 'journey') return
