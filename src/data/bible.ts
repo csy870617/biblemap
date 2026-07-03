@@ -138,10 +138,19 @@ export async function fetchPassage(ref: ParsedRef, lang: 'ko' | 'en'): Promise<P
     const res = await fetch(url, { signal: controller.signal })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const data = await res.json()
-    const all: Verse[] = (data.verses ?? []).map((v: { verse: number; text: string }) => ({
-      verse: v.verse,
-      text: (v.text ?? '').trim(),
-    }))
+    // API 응답 형태가 예상과 다르면(필드명 변경 등) 조용히 깨진 본문을 보여주는 대신
+    // 에러로 처리해 호출 측(VersePanel)의 기존 오류 안내 화면으로 넘어가게 합니다.
+    if (!Array.isArray(data.verses)) throw new Error('Unexpected API response shape: verses is not an array')
+    const all: Verse[] = data.verses
+      .filter((v: unknown): v is { verse: number; text: string } => {
+        const rec = v as { verse?: unknown; text?: unknown } | null
+        return typeof rec?.verse === 'number' && typeof rec?.text === 'string'
+      })
+      .map((v: { verse: number; text: string }) => ({
+        verse: v.verse,
+        text: v.text.trim(),
+      }))
+    if (all.length === 0) throw new Error('No valid verses parsed from API response')
     let verses = all
     if (ref.vStart != null) {
       const end = ref.vEnd ?? ref.vStart
