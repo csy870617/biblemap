@@ -83,7 +83,9 @@ export interface ParsedRef {
   info: BookInfo
   chapter: number
   vStart?: number
-  vEnd?: number
+  vEnd?: number // undefined이고 vStart가 있으면 "그 장 끝까지"
+  chEnd?: number // 장을 넘는 범위의 끝 장(예: 27:39~28:10 → 28, 19~20장 → 20). 외부 링크용
+  vEndInChEnd?: number // 장을 넘는 범위에서 끝 장의 마지막 절(예: 27:39~28:10 → 10)
 }
 
 // "사도행전 13:1-3", "출애굽기 19~20장", "시편 137편" 등을 파싱
@@ -101,18 +103,31 @@ export function parseRef(raw: string): ParsedRef | null {
   // 절 범위(11:31 / 11:31-32 / 11:31~28:10) 추출
   let vStart: number | undefined
   let vEnd: number | undefined
-  const vm = rest.match(/:\s*(\d+)\s*[-~]\s*(?:\d+:)?(\d+)/) // 11:31-32, 27:39~28:10
+  let chEnd: number | undefined
+  let vEndInChEnd: number | undefined
+  const vm = rest.match(/:\s*(\d+)\s*[-~]\s*(?:(\d+):)?(\d+)/) // 11:31-32, 27:39~28:10
   const vs = rest.match(/:\s*(\d+)/) // 11:31
+  const cm = rest.match(/^\s*\d+\s*[-~]\s*(\d+)\s*장/) // 19~20장
   if (vm) {
     vStart = parseInt(vm[1], 10)
-    vEnd = parseInt(vm[2], 10)
-    if (vEnd < vStart) vEnd = undefined // 장을 넘는 범위는 시작 장만 표시
+    const endCh = vm[2] ? parseInt(vm[2], 10) : chapter
+    if (endCh > chapter) {
+      // 장을 넘는 범위는 시작 장의 시작 절부터 그 장 끝까지 표시
+      chEnd = endCh
+      vEndInChEnd = parseInt(vm[3], 10)
+    } else {
+      vEnd = parseInt(vm[3], 10)
+      if (vEnd < vStart) vEnd = vStart
+    }
   } else if (vs) {
     vStart = parseInt(vs[1], 10)
     vEnd = vStart
+  } else if (cm) {
+    const endCh = parseInt(cm[1], 10)
+    if (endCh > chapter) chEnd = endCh
   }
 
-  return { raw, book, info, chapter, vStart, vEnd }
+  return { raw, book, info, chapter, vStart, vEnd, chEnd, vEndInChEnd }
 }
 
 export interface Verse {
@@ -153,7 +168,7 @@ export async function fetchPassage(ref: ParsedRef, lang: 'ko' | 'en'): Promise<P
     if (all.length === 0) throw new Error('No valid verses parsed from API response')
     let verses = all
     if (ref.vStart != null) {
-      const end = ref.vEnd ?? ref.vStart
+      const end = ref.vEnd ?? Infinity
       verses = all.filter((v) => v.verse >= ref.vStart! && v.verse <= end)
     }
     if (verses.length === 0) verses = all.slice(0, 5) // 범위 매칭 실패 시 앞부분
@@ -165,8 +180,18 @@ export async function fetchPassage(ref: ParsedRef, lang: 'ko' | 'en'): Promise<P
 
 // 외부 성경 사이트 링크(폴백/추가 번역)
 export function externalLink(ref: ParsedRef, lang: 'ko' | 'en'): string {
-  const vpart = ref.vStart != null ? `:${ref.vStart}${ref.vEnd && ref.vEnd !== ref.vStart ? '-' + ref.vEnd : ''}` : ''
-  const search = encodeURIComponent(`${ref.info.en} ${ref.chapter}${vpart}`)
+  let range: string
+  if (ref.chEnd != null) {
+    // 장을 넘는 범위: 27:39-28:10 또는 19-20
+    range =
+      ref.vStart != null && ref.vEndInChEnd != null
+        ? `${ref.chapter}:${ref.vStart}-${ref.chEnd}:${ref.vEndInChEnd}`
+        : `${ref.chapter}-${ref.chEnd}`
+  } else {
+    const vpart = ref.vStart != null ? `:${ref.vStart}${ref.vEnd && ref.vEnd !== ref.vStart ? '-' + ref.vEnd : ''}` : ''
+    range = `${ref.chapter}${vpart}`
+  }
+  const search = encodeURIComponent(`${ref.info.en} ${range}`)
   const version = lang === 'ko' ? 'KLB' : 'NIV'
   return `https://www.biblegateway.com/passage/?search=${search}&version=${version}`
 }

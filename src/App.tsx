@@ -57,7 +57,11 @@ export default function App() {
     stopPlay()
     if (selectedIds.includes(id)) {
       const next = selectedIds.filter((x) => x !== id)
-      if (activeId === id) setActiveId(next[0] ?? null)
+      if (activeId === id) {
+        setActiveId(next[0] ?? null)
+        // 이전 테마의 지점 선택이 남아 있으면, 같은 id의 지점을 가진 새 활성 테마로 지도가 엉뚱하게 이동함
+        setSelectedLocId(null)
+      }
       setSelectedIds(next)
     } else {
       if (!activeId) setActiveId(id)

@@ -136,6 +136,17 @@ function MapController({
     if (!suppressUserZoomRef.current) userZoomedRef.current = true
   })
 
+  // 프로그램적 이동이 끝나면(moveend) 사용자 확대/축소 감지를 다시 켭니다. setTimeout으로
+  // 한 틱 미루는 이유는, 같은 zoomend 이벤트 디스패치 안에서 이 리셋이 먼저 실행돼 버리면
+  // 위 useMapEvent 핸들러가 우리 자신의 이동을 "사용자 조작"으로 오인할 수 있기 때문입니다.
+  const releaseSuppressionAfterMove = () => {
+    map.once('moveend', () => {
+      setTimeout(() => {
+        suppressUserZoomRef.current = false
+      }, 0)
+    })
+  }
+
   // 위 zoomend 감지는 우리 자신의 flyTo/fitBounds 애니메이션이 진행되는 동안(약 0.8초) 억제되는데,
   // 만약 그 짧은 창 안에 사용자가 실제로 휠/핀치/더블클릭/줌 버튼으로 확대·축소하면 그 조작이
   // 감지되지 않고 누락되는 경합(race)이 있었습니다. 이런 제스처는 우리 코드가 절대 발생시키지
@@ -174,16 +185,6 @@ function MapController({
     const pts = themes.flatMap((t) => t.locations.map((l) => l.coord))
     if (pts.length === 0) return // 위치가 없는 테마만 표시된 경우 fitBounds가 예외를 던지므로 방어
     const bounds = L.latLngBounds(pts)
-    // 위 프로그램적 이동이 끝나면(moveend) 사용자 확대/축소 감지를 다시 켭니다. setTimeout으로
-    // 한 틱 미루는 이유는, 같은 zoomend 이벤트 디스패치 안에서 이 리셋이 먼저 실행돼 버리면
-    // 위 useMapEvent 핸들러가 우리 자신의 이동을 "사용자 조작"으로 오인할 수 있기 때문입니다.
-    const releaseSuppressionAfterMove = () => {
-      map.once('moveend', () => {
-        setTimeout(() => {
-          suppressUserZoomRef.current = false
-        }, 0)
-      })
-    }
     // 지점들이 서로 아주 가까우면(핵심지명·성지순례처럼 1~4곳뿐인 경우) fitBounds가 최대 줌까지
     // 확대해 버려 주변 지도를 함께 보기 어려우므로, 적당한 고정 줌으로 이동합니다.
     // 단, 사용자가 이미 직접 확대/축소를 조작한 적이 있다면 그 축척을 그대로 유지합니다.
@@ -203,7 +204,12 @@ function MapController({
   useEffect(() => {
     if (!active || !selectedLocId) return
     const loc = active.locations.find((l) => l.id === selectedLocId)
-    if (loc) map.flyTo(loc.coord, Math.max(map.getZoom(), 7), { duration: 0.8 })
+    if (!loc) return
+    // 지점 선택에 따른 자동 확대를 "사용자가 직접 확대/축소함"으로 오인하지 않도록 억제
+    suppressUserZoomRef.current = true
+    map.flyTo(loc.coord, Math.max(map.getZoom(), 7), { duration: 0.8 })
+    releaseSuppressionAfterMove()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLocId, active, map])
 
   // 재생 카메라 추적
